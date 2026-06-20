@@ -20,6 +20,17 @@ const { title, description = "Flowmodoro — Intelligent Focus Timer" } = Astro.
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <title>{title}</title>
+    <script>
+      // Prevent flash of wrong theme before React hydrates
+      (function() {
+        const stored = localStorage.getItem('flowmodoro-dark-mode');
+        if (stored !== null) {
+          if (stored === 'true') document.documentElement.classList.add('dark');
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
   <body>
     <slot />
