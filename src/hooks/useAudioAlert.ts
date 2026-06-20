@@ -12,7 +12,7 @@ interface UseAudioAlertReturn {
 
 export function useAudioAlert(): UseAudioAlertReturn {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const currentSoundRef = useRef<AlarmSoundId>("gentle-chime");
+  const currentSoundRef = useRef<AlarmSoundId>("classic-alarm");
   const isPlayingRef = useRef(false);
 
   const { alarmSound, volume } = useSettingsStore();

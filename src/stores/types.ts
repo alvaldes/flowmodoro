@@ -1,6 +1,15 @@
 export type AppState = "idle" | "focusing" | "resting" | "completed";
 
-export type AlarmSoundId = "gentle-chime" | "soft-bell" | "digital-beep" | "nature" | "classic-alarm";
+export type AlarmSoundId =
+  | "achievement-bell"
+  | "bell-notification"
+  | "casino-reward"
+  | "classic-alarm"
+  | "digital-alarm"
+  | "happy-bells"
+  | "notification-bell"
+  | "uplifting-bells"
+  | "urgent-tone";
 
 export interface Session {
   duration: number;

@@ -1,6 +1,15 @@
 export const DAY_LABELS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] as const;
 
-export type AlarmSoundId = "gentle-chime" | "soft-bell" | "digital-beep" | "nature" | "classic-alarm";
+export type AlarmSoundId =
+  | "achievement-bell"
+  | "bell-notification"
+  | "casino-reward"
+  | "classic-alarm"
+  | "digital-alarm"
+  | "happy-bells"
+  | "notification-bell"
+  | "uplifting-bells"
+  | "urgent-tone";
 
 export interface AlarmSound {
   id: AlarmSoundId;
@@ -9,11 +18,15 @@ export interface AlarmSound {
 }
 
 export const ALARM_SOUNDS: AlarmSound[] = [
-  { id: "gentle-chime", label: "Gentle Chime", file: "/sounds/gentle-chime.mp3" },
-  { id: "soft-bell", label: "Soft Bell", file: "/sounds/soft-bell.mp3" },
-  { id: "digital-beep", label: "Digital Beep", file: "/sounds/digital-beep.mp3" },
-  { id: "nature", label: "Nature", file: "/sounds/nature.mp3" },
-  { id: "classic-alarm", label: "Classic Alarm", file: "/sounds/classic-alarm.mp3" },
+  { id: "achievement-bell",   label: "Achievement Bell",   file: "/sounds/mixkit-achievement-bell.wav" },
+  { id: "bell-notification",  label: "Bell Notification",  file: "/sounds/mixkit-bell-notification.wav" },
+  { id: "casino-reward",      label: "Casino Reward",      file: "/sounds/mixkit-casino-bells-reward.wav" },
+  { id: "classic-alarm",      label: "Classic Alarm",      file: "/sounds/mixkit-classic-alarm.wav" },
+  { id: "digital-alarm",      label: "Digital Alarm",      file: "/sounds/mixkit-digital-clock-digital-alarm-buzzer.wav" },
+  { id: "happy-bells",        label: "Happy Bells",        file: "/sounds/mixkit-happy-bells-notification.wav" },
+  { id: "notification-bell",  label: "Notification Bell",  file: "/sounds/mixkit-notification-bell.wav" },
+  { id: "uplifting-bells",    label: "Uplifting Bells",    file: "/sounds/mixkit-uplifting-bells-notification.wav" },
+  { id: "urgent-tone",        label: "Urgent Tone",        file: "/sounds/mixkit-urgent-simple-tone-loop.wav" },
 ];
 
 export const TIMER = {

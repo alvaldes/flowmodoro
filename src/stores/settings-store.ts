@@ -15,7 +15,7 @@ export const useSettingsStore = create<SettingsStore>()(
     (set) => ({
       restRatio: TIMER.DEFAULT_REST_RATIO,
       darkMode: getSystemDarkMode(),
-      alarmSound: "gentle-chime" as AlarmSoundId,
+      alarmSound: "classic-alarm" as AlarmSoundId,
       volume: 0.5,
       notificationsEnabled: false,
 

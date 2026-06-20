@@ -11,7 +11,7 @@ export default defineConfig({
     react(),
     pwa({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'favicon.ico', 'sounds/*.mp3'],
+      includeAssets: ['favicon.svg', 'favicon.ico', 'sounds/*.wav'],
       manifest: {
         name: 'Flowmodoro',
         short_name: 'Flowmodoro',
@@ -25,7 +25,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,mp3}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,wav}'],
         navigateFallback: '/',
       },
     }),

@@ -6,7 +6,7 @@ describe("settings-store", () => {
     useSettingsStore.setState({
       restRatio: 0.2,
       darkMode: false,
-      alarmSound: "gentle-chime",
+      alarmSound: "classic-alarm",
       volume: 0.5,
       notificationsEnabled: false,
     });
