@@ -15,17 +15,24 @@ const OUTER_R = 148;
 const TICK_COUNT = 60;
 
 export default function AnalogDial({ time, state, reducedMotion }: AnalogDialProps) {
-  const seconds = time % 60;
-  const secondsAngle = (seconds / 60) * 360;
-  const progress =
-    state === "resting" ? 0 : Math.min(time / 3600, 1);
+  const ringProgress = state === "resting"
+    ? 0
+    : time < 3600
+      ? (time % 60) / 60           // seconds within the minute
+      : (time % 3600) / 3600;      // minutes within the hour
+
+  const ticksFilled = state === "resting"
+    ? 0
+    : time < 3600
+      ? Math.floor((time % 3600) / 60)   // minutes within the hour
+      : Math.floor(time / 3600);          // total hours
 
   const ticks = useMemo(() => {
     const arr: { x1: number; y1: number; x2: number; y2: number; filled: boolean }[] = [];
     for (let i = 0; i < TICK_COUNT; i++) {
       const angle = (i / TICK_COUNT) * 360 - 90;
       const rad = (angle * Math.PI) / 180;
-      const filled = state === "resting" ? false : i / TICK_COUNT < progress;
+      const filled = state === "resting" ? false : i < ticksFilled;
       const x1 = CX + (OUTER_R - 18) * Math.cos(rad);
       const y1 = CY + (OUTER_R - 18) * Math.sin(rad);
       const x2 = CX + (OUTER_R - 8) * Math.cos(rad);
@@ -33,7 +40,7 @@ export default function AnalogDial({ time, state, reducedMotion }: AnalogDialPro
       arr.push({ x1, y1, x2, y2, filled });
     }
     return arr;
-  }, [progress, state]);
+  }, [ticksFilled, state]);
 
   const circumference = 2 * Math.PI * (OUTER_R - 26);
 
@@ -76,8 +83,8 @@ export default function AnalogDial({ time, state, reducedMotion }: AnalogDialPro
         />
       )}
 
-      {/* Progress ring (focusing) */}
-      {state === "focusing" && (
+      {/* Hour ring (fills over 60min) */}
+      {state !== "idle" && (
         <circle
           cx={CX}
           cy={CY}
@@ -87,7 +94,7 @@ export default function AnalogDial({ time, state, reducedMotion }: AnalogDialPro
           strokeWidth={4}
           strokeLinecap="round"
           strokeDasharray={circumference}
-          strokeDashoffset={circumference * (1 - progress)}
+          strokeDashoffset={circumference * (1 - ringProgress)}
           transform={`rotate(-90 ${CX} ${CY})`}
           style={{
             transition: reducedMotion ? "none" : "stroke-dashoffset 1s linear",
@@ -96,48 +103,29 @@ export default function AnalogDial({ time, state, reducedMotion }: AnalogDialPro
         />
       )}
 
-      {/* Resting ring */}
-      {state === "resting" && (
-        <circle
-          cx={CX}
-          cy={CY}
-          r={OUTER_R - 26}
-          fill="none"
-          stroke="var(--accent)"
-          strokeWidth={4}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={0}
-          transform={`rotate(-90 ${CX} ${CY})`}
-          style={{ opacity: 0.6 }}
-        />
-      )}
-
-      {/* Seconds hand */}
+      {/* Unit labels (superscript) */}
       {state !== "idle" && (
-        <>
-          <line
-            x1={CX}
-            y1={CY}
-            x2={CX}
-            y2={CY - OUTER_R + 20}
-            stroke="var(--accent)"
-            strokeWidth={2}
-            strokeLinecap="round"
-            opacity={0.55}
-            transform={`rotate(${secondsAngle} ${CX} ${CY})`}
-            style={{
-              transition: reducedMotion ? "none" : "transform 0.3s linear",
-            }}
-          />
-          <circle
-            cx={CX}
-            cy={CY}
-            r={4}
-            fill="var(--fg)"
-            opacity={0.3}
-          />
-        </>
+        <g
+          fill="var(--muted)"
+          style={{
+            fontFamily: "var(--font-body, -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif)",
+            fontSize: "11px",
+            fontWeight: 500,
+            letterSpacing: "0.06em",
+          }}
+        >
+          {time < 3600 ? (
+            <>
+              <text x={CX - 30} y={CY - 40} textAnchor="middle">MIN</text>
+              <text x={CX + 30} y={CY - 40} textAnchor="middle">SEC</text>
+            </>
+          ) : (
+            <>
+              <text x={CX - 48} y={CY - 40} textAnchor="middle">HR</text>
+              <text x={CX + 35} y={CY - 40} textAnchor="middle">MIN</text>
+            </>
+          )}
+        </g>
       )}
 
       {/* Time display */}

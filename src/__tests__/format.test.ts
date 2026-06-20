@@ -18,8 +18,9 @@ describe("formatTime", () => {
   });
 
   it("formats hours correctly", () => {
-    expect(formatTime(3600)).toBe("60:00");
-    expect(formatTime(3661)).toBe("61:01");
+    expect(formatTime(3600)).toBe("1:00:00");
+    expect(formatTime(3661)).toBe("1:01:01");
+    expect(formatTime(7384)).toBe("2:03:04");
   });
 
   it("pads single digit minutes and seconds", () => {
@@ -38,10 +39,20 @@ describe("formatDuration", () => {
     expect(formatDuration(600)).toBe("10m");
   });
 
-  it("formats hours correctly", () => {
-    expect(formatDuration(3600)).toBe("1h 0m");
+  it("omits zero minutes when showing hours", () => {
+    expect(formatDuration(3600)).toBe("1h");
+    expect(formatDuration(7200)).toBe("2h");
+  });
+
+  it("shows hours and minutes when both present", () => {
     expect(formatDuration(3660)).toBe("1h 1m");
     expect(formatDuration(7260)).toBe("2h 1m");
+  });
+
+  it("shows days instead of 24h+", () => {
+    expect(formatDuration(86400)).toBe("1d");
+    expect(formatDuration(90000)).toBe("1d 1h");
+    expect(formatDuration(172800)).toBe("2d");
   });
 
   it("rounds down minutes", () => {
