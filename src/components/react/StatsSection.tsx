@@ -248,39 +248,49 @@ export default function StatsSection() {
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           {[...sessions].reverse().map((s, i) => (
-            <div
-              key={i}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "14px 16px",
-                background: "var(--surface)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius-md, 12px)",
-                fontSize: "14px",
-                transition:
-                  "background var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
-              }}
-            >
-              <div>
-                <span style={{ color: "var(--fg)", fontWeight: 500 }}>
-                  {new Date(s.timestamp).toLocaleDateString([], {
-                    weekday: "short",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </span>
-                <span style={{ color: "var(--muted)", marginLeft: "8px" }}>
-                  {new Date(s.timestamp).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+            <div key={i} style={{
+              display: "flex", flexDirection: "column",
+              padding: "14px 16px",
+              background: "var(--surface)", border: "1px solid var(--border)",
+              borderRadius: "var(--radius-md, 12px)", fontSize: "14px",
+              transition: "background var(--motion-base, 250ms) var(--ease-standard)"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <span style={{ color: "var(--fg)", fontWeight: 500 }}>
+                    {new Date(s.timestamp).toLocaleDateString([], {
+                      weekday: "short", month: "short", day: "numeric",
+                    })}
+                  </span>
+                  <span style={{ color: "var(--muted)", marginLeft: "8px" }}>
+                    {new Date(s.timestamp).toLocaleTimeString([], {
+                      hour: "2-digit", minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+                <span style={{ fontWeight: 600, color: "var(--accent)" }}>
+                  {formatDuration(s.duration)}
                 </span>
               </div>
-              <span style={{ fontWeight: 600, color: "var(--accent)" }}>
-                {formatDuration(s.duration)}
-              </span>
+              {(s.name || (s.tags && s.tags.length > 0)) && (
+                <div style={{ marginTop: "8px", display: "flex", flexWrap: "wrap", gap: "6px", alignItems: "center" }}>
+                  {s.name && (
+                    <span style={{ fontSize: "12px", fontWeight: 500, color: "var(--fg)" }}>
+                      {s.name}
+                    </span>
+                  )}
+                  {s.tags?.map((tag, ti) => (
+                    <span key={ti} style={{
+                      fontSize: "10px", fontWeight: 500,
+                      background: "var(--accent-dim)", color: "var(--accent)",
+                      padding: "2px 8px", borderRadius: "4px",
+                      textTransform: "uppercase", letterSpacing: "0.04em",
+                    }}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>

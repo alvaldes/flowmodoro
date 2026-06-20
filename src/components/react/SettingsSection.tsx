@@ -1,9 +1,21 @@
 import { useSettingsStore } from "@/stores/settings-store";
 import { useSessionsStore } from "@/stores/sessions-store";
+import { ALARM_SOUNDS } from "@/lib/constants";
+import type { AlarmSoundId } from "@/stores/types";
 
 export default function SettingsSection() {
-  const { restRatio, darkMode, setRestRatio, toggleDarkMode } =
-    useSettingsStore();
+  const {
+    restRatio,
+    darkMode,
+    alarmSound,
+    volume,
+    notificationsEnabled,
+    setRestRatio,
+    toggleDarkMode,
+    setAlarmSound,
+    setVolume,
+    toggleNotifications,
+  } = useSettingsStore();
   const sessionCount = useSessionsStore((s) => s.sessions.length);
 
   return (
@@ -172,6 +184,99 @@ export default function SettingsSection() {
               boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
             }}
           />
+        </button>
+      </div>
+
+      {/* Alarm Sound */}
+      <h3 style={{ fontSize: "15px", fontWeight: 600, marginBottom: "16px", letterSpacing: "-0.01em" }}>
+        Alarm
+      </h3>
+
+      <div style={{
+        background: "var(--surface)", border: "1px solid var(--border)",
+        borderRadius: "var(--radius-lg, 16px)", padding: "20px",
+        marginBottom: "24px", display: "flex", flexDirection: "column", gap: "16px",
+        transition: "background var(--motion-base, 250ms) var(--ease-standard)"
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontWeight: 500, fontSize: "15px" }}>Sound</div>
+            <div style={{ fontSize: "12px", color: "var(--muted)", marginTop: "2px" }}>
+              Alarm when session ends
+            </div>
+          </div>
+          <select
+            value={alarmSound}
+            onChange={(e) => setAlarmSound(e.target.value as AlarmSoundId)}
+            aria-label="Alarm sound"
+            style={{
+              background: "var(--bg)", border: "1px solid var(--border)",
+              borderRadius: "var(--radius-sm, 8px)", padding: "8px 12px",
+              fontSize: "13px", color: "var(--fg)", cursor: "pointer",
+            }}
+          >
+            {ALARM_SOUNDS.map((s) => (
+              <option key={s.id} value={s.id}>{s.label}</option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontSize: "13px", color: "var(--muted)" }}>Volume</span>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={volume}
+            onChange={(e) => setVolume(parseFloat(e.target.value))}
+            aria-label="Alarm volume"
+            style={{ width: "60%" }}
+          />
+          <span style={{ fontSize: "13px", fontWeight: 500, minWidth: "32px", textAlign: "right" }}>
+            {Math.round(volume * 100)}%
+          </span>
+        </div>
+      </div>
+
+      {/* Notifications */}
+      <h3 style={{ fontSize: "15px", fontWeight: 600, marginBottom: "16px", letterSpacing: "-0.01em" }}>
+        Notifications
+      </h3>
+
+      <div style={{
+        background: "var(--surface)", border: "1px solid var(--border)",
+        borderRadius: "var(--radius-lg, 16px)", padding: "20px",
+        marginBottom: "24px", display: "flex",
+        justifyContent: "space-between", alignItems: "center",
+        transition: "background var(--motion-base, 250ms) var(--ease-standard)"
+      }}>
+        <div>
+          <div style={{ fontWeight: 500, fontSize: "15px" }}>Browser Notifications</div>
+          <div style={{ fontSize: "12px", color: "var(--muted)", marginTop: "2px" }}>
+            Show notifications when focus ends
+          </div>
+        </div>
+        <button
+          onClick={toggleNotifications}
+          role="switch"
+          aria-checked={notificationsEnabled}
+          aria-label="Toggle browser notifications"
+          style={{
+            width: "48px", height: "28px", borderRadius: "14px",
+            background: notificationsEnabled ? "var(--accent)" : "var(--border)",
+            border: "none", cursor: "pointer", position: "relative",
+            transition: "background var(--motion-fast, 150ms) var(--ease-standard)",
+            padding: 0,
+          }}
+        >
+          <div style={{
+            width: "22px", height: "22px", borderRadius: "50%",
+            background: "white", position: "absolute", top: "3px",
+            left: notificationsEnabled ? "23px" : "3px",
+            transition: "left var(--motion-fast, 150ms) var(--ease-standard)",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
+          }} />
         </button>
       </div>
 

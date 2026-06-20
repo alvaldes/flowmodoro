@@ -34,4 +34,20 @@ describe("sessions-store", () => {
     useSessionsStore.getState().clearSessions();
     expect(useSessionsStore.getState().sessions).toHaveLength(0);
   });
+
+  it("updateSession patches name and tags on existing session", () => {
+    const session = { duration: 300, timestamp: 1000 };
+    useSessionsStore.getState().addSession(session);
+    useSessionsStore.getState().updateSession(1000, { name: "Deep Work", tags: ["coding", "focus"] });
+    const updated = useSessionsStore.getState().sessions[0];
+    expect(updated.name).toBe("Deep Work");
+    expect(updated.tags).toEqual(["coding", "focus"]);
+    expect(updated.duration).toBe(300); // unchanged
+  });
+
+  it("updateSession does nothing for unknown timestamp", () => {
+    useSessionsStore.getState().addSession({ duration: 300, timestamp: 1000 });
+    useSessionsStore.getState().updateSession(9999, { name: "Ghost" });
+    expect(useSessionsStore.getState().sessions[0].name).toBeUndefined();
+  });
 });

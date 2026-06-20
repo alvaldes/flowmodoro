@@ -1,30 +1,39 @@
-import { useTimerStore } from "@/stores/timer-store";
-import { useSessionsStore } from "@/stores/sessions-store";
-import { useSettingsStore } from "@/stores/settings-store";
+import { useState } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { formatDuration } from "@/lib/format";
+import type { AppState } from "@/stores/types";
 import AnalogDial from "./AnalogDial";
 
-export default function TimerSection() {
-  const { appState, time, start, takeBreak, end } = useTimerStore();
-  const { addSession } = useSessionsStore();
-  const { restRatio } = useSettingsStore();
+interface TimerSectionProps {
+  appState: AppState;
+  time: number;
+  onStart: () => void;
+  onBreak: () => void;
+  onEnd: () => void;
+  onDismissCompleted: () => void;
+  onNameSession: (name: string, tags: string[]) => void;
+}
+
+export default function TimerSection({
+  appState,
+  time,
+  onStart,
+  onBreak,
+  onEnd,
+  onDismissCompleted,
+  onNameSession,
+}: TimerSectionProps) {
   const reducedMotion = useReducedMotion();
+  const [sessionName, setSessionName] = useState("");
+  const [sessionTags, setSessionTags] = useState("");
 
-  const handleStart = () => start();
-
-  const handleBreak = () => {
-    if (time > 0) {
-      addSession({ duration: time, timestamp: Date.now() });
-    }
-    takeBreak(restRatio, time);
-  };
-
-  const handleEnd = () => {
-    const session = end(time);
-    if (session) {
-      addSession(session);
-    }
+  const handleSaveName = () => {
+    const tags = sessionTags
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+    onNameSession(sessionName, tags);
+    onDismissCompleted();
   };
 
   return (
@@ -51,90 +60,78 @@ export default function TimerSection() {
         </p>
       )}
 
-      <div
-        style={{
-          display: "flex",
-          gap: "16px",
-          width: "100%",
-          marginTop: "48px",
-          flexDirection: "column",
-        }}
-      >
-        {appState === "idle" && (
-          <>
-            <button
-              className="btn-primary"
-              style={{
-                width: "100%",
-                background: "var(--accent)",
-                color: "white",
-                padding: "16px 24px",
-                fontWeight: 600,
-                fontSize: "16px",
-                letterSpacing: "0.02em",
-              }}
-              onClick={handleStart}
-              aria-label="Start new flow session"
-            >
-              Start New Flow
-            </button>
-            {time > 0 && (
-              <button
-                className="btn-secondary"
-                style={{
-                  width: "100%",
-                  background: "var(--surface)",
-                  color: "var(--fg)",
-                  border: "1px solid var(--border)",
-                  padding: "12px 20px",
-                }}
-                onClick={handleEnd}
-                aria-label="Save and close current session"
-              >
-                Save and Close Session
-              </button>
-            )}
-          </>
-        )}
-
-        {appState === "focusing" && (
-          <div style={{ display: "flex", gap: "16px", width: "100%" }}>
-            <button
-              className="btn-secondary"
-              style={{
-                flex: 1,
-                background: "var(--surface)",
-                color: "var(--fg)",
-                border: "1px solid var(--border)",
-                padding: "12px 20px",
-              }}
-              onClick={handleBreak}
-              aria-label="Take a break"
-            >
-              Take Break
-            </button>
-            <button
-              className="btn-primary"
-              style={{
-                flex: 1,
-                background: "var(--accent)",
-                color: "white",
-                padding: "16px 24px",
-                fontWeight: 600,
-                fontSize: "16px",
-                letterSpacing: "0.02em",
-              }}
-              onClick={handleEnd}
-              aria-label="End focus session"
-            >
-              End Flow
-            </button>
+      {/* Completed state */}
+      {appState === "completed" && (
+        <div
+          style={{
+            marginTop: "32px",
+            width: "100%",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              fontSize: "20px",
+              fontWeight: 600,
+              marginBottom: "16px",
+              letterSpacing: "-0.01em",
+            }}
+          >
+            Session Complete!
           </div>
-        )}
 
-        {appState === "resting" && (
+          <div
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--radius-lg, 16px)",
+              padding: "20px",
+              marginBottom: "16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+            }}
+          >
+            <input
+              type="text"
+              placeholder="Session name (optional)"
+              value={sessionName}
+              onChange={(e) => setSessionName(e.target.value)}
+              aria-label="Session name"
+              style={{
+                background: "var(--bg)",
+                border: "1px solid var(--border)",
+                borderRadius: "var(--radius-sm, 8px)",
+                padding: "12px 16px",
+                fontSize: "14px",
+                color: "var(--fg)",
+                fontFamily: "var(--font-body)",
+                outline: "none",
+                width: "100%",
+              }}
+            />
+            <input
+              type="text"
+              placeholder="Tags (comma separated, optional)"
+              value={sessionTags}
+              onChange={(e) => setSessionTags(e.target.value)}
+              aria-label="Session tags"
+              style={{
+                background: "var(--bg)",
+                border: "1px solid var(--border)",
+                borderRadius: "var(--radius-sm, 8px)",
+                padding: "12px 16px",
+                fontSize: "14px",
+                color: "var(--fg)",
+                fontFamily: "var(--font-body)",
+                outline: "none",
+                width: "100%",
+              }}
+            />
+          </div>
+
           <button
-            className="btn-primary"
+            onClick={handleSaveName}
             style={{
               width: "100%",
               background: "var(--accent)",
@@ -143,14 +140,128 @@ export default function TimerSection() {
               fontWeight: 600,
               fontSize: "16px",
               letterSpacing: "0.02em",
+              borderRadius: "var(--radius-md, 12px)",
+              border: "none",
+              cursor: "pointer",
             }}
-            onClick={handleStart}
-            aria-label="Resume focus"
+            aria-label="Save session and continue"
           >
-            Resume Focus
+            Done
           </button>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Action buttons (only when NOT completed) */}
+      {appState !== "completed" && (
+        <div
+          style={{
+            display: "flex",
+            gap: "16px",
+            width: "100%",
+            marginTop: "48px",
+            flexDirection: "column",
+          }}
+        >
+          {appState === "idle" && (
+            <>
+              <button
+                onClick={onStart}
+                aria-label="Start new flow session"
+                style={{
+                  width: "100%",
+                  background: "var(--accent)",
+                  color: "white",
+                  padding: "16px 24px",
+                  fontWeight: 600,
+                  fontSize: "16px",
+                  letterSpacing: "0.02em",
+                  borderRadius: "var(--radius-md, 12px)",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+              >
+                Start New Flow
+              </button>
+              {time > 0 && (
+                <button
+                  onClick={onEnd}
+                  aria-label="Save and close current session"
+                  style={{
+                    width: "100%",
+                    background: "var(--surface)",
+                    color: "var(--fg)",
+                    border: "1px solid var(--border)",
+                    padding: "12px 20px",
+                    borderRadius: "var(--radius-md, 12px)",
+                    cursor: "pointer",
+                  }}
+                >
+                  Save and Close Session
+                </button>
+              )}
+            </>
+          )}
+
+          {appState === "focusing" && (
+            <div style={{ display: "flex", gap: "16px", width: "100%" }}>
+              <button
+                onClick={onBreak}
+                aria-label="Take a break"
+                style={{
+                  flex: 1,
+                  background: "var(--surface)",
+                  color: "var(--fg)",
+                  border: "1px solid var(--border)",
+                  padding: "12px 20px",
+                  borderRadius: "var(--radius-md, 12px)",
+                  cursor: "pointer",
+                }}
+              >
+                Take Break
+              </button>
+              <button
+                onClick={onEnd}
+                aria-label="End focus session"
+                style={{
+                  flex: 1,
+                  background: "var(--accent)",
+                  color: "white",
+                  padding: "16px 24px",
+                  fontWeight: 600,
+                  fontSize: "16px",
+                  letterSpacing: "0.02em",
+                  borderRadius: "var(--radius-md, 12px)",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+              >
+                End Flow
+              </button>
+            </div>
+          )}
+
+          {appState === "resting" && (
+            <button
+              onClick={onStart}
+              aria-label="Resume focus"
+              style={{
+                width: "100%",
+                background: "var(--accent)",
+                color: "white",
+                padding: "16px 24px",
+                fontWeight: 600,
+                fontSize: "16px",
+                letterSpacing: "0.02em",
+                borderRadius: "var(--radius-md, 12px)",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Resume Focus
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

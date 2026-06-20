@@ -32,3 +32,6 @@ DESIGN-MANIFEST.json
 *.png
 *.jpg
 *.webp
+
+# PWA icons (track intentionally)
+!public/icons/*.png

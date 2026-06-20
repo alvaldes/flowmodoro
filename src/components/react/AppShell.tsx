@@ -1,9 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTimerStore } from "@/stores/timer-store";
 import { useSettingsStore } from "@/stores/settings-store";
+import { useTimerStore } from "@/stores/timer-store";
 import { useSessionsStore } from "@/stores/sessions-store";
+import { usePreciseTimer } from "@/hooks/usePreciseTimer";
+import { useAudioAlert } from "@/hooks/useAudioAlert";
+import { useNotification } from "@/hooks/useNotification";
+import { usePreWarmAudio } from "@/hooks/usePreWarmAudio";
+import { formatDuration } from "@/lib/format";
 import type { AppView } from "@/lib/constants";
+import type { Session } from "@/stores/types";
 import Onboarding from "./Onboarding";
 import TimerSection from "./TimerSection";
 import StatsSection from "./StatsSection";
@@ -20,9 +26,37 @@ const viewTransition = {
 export default function AppShell() {
   const [view, setView] = useState<AppView>("timer");
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
+  const [lastSessionName, setLastSessionName] = useState("");
 
-  const { appState, tick, reset } = useTimerStore();
   const darkMode = useSettingsStore((s) => s.darkMode);
+  const notificationsEnabled = useSettingsStore((s) => s.notificationsEnabled);
+
+  // Pre-warm audio on first user interaction
+  usePreWarmAudio();
+
+  // Audio alert
+  const { play: playAlarm } = useAudioAlert();
+
+  // Browser notification
+  const { show: showNotification } = useNotification();
+
+  // Handle session completion side effects
+  const handleSessionEnd = useCallback(
+    (session: Session) => {
+      playAlarm();
+      if (notificationsEnabled) {
+        showNotification("Flow Session Complete!", {
+          body: `You focused for ${formatDuration(session.duration)}`,
+        });
+      }
+    },
+    [playAlarm, showNotification, notificationsEnabled]
+  );
+
+  // Timer engine
+  const timer = usePreciseTimer({
+    onSessionEnd: handleSessionEnd,
+  });
 
   // Sync dark mode to DOM
   useEffect(() => {
@@ -35,34 +69,14 @@ export default function AppShell() {
     }
   }, [darkMode]);
 
-  // Timer interval: count up during focusing, count down during resting
-  useEffect(() => {
-    if (appState === "idle") return;
-
-    const interval = setInterval(() => {
-      if (appState === "focusing") {
-        tick();
-      } else if (appState === "resting") {
-        const current = useTimerStore.getState().time;
-        if (current <= 0) {
-          reset();
-        } else {
-          useTimerStore.setState({ time: current - 1 });
-        }
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [appState, tick, reset]);
-
-  // Hydrate persisted stores (skipHydration requires manual rehydration)
+  // Hydrate persisted stores
   useEffect(() => {
     useTimerStore.persist.rehydrate();
     useSettingsStore.persist.rehydrate();
     useSessionsStore.persist.rehydrate();
   }, []);
 
-  // Restore onboarding state from localStorage
+  // Restore onboarding state
   useEffect(() => {
     const seen = localStorage.getItem("flowmodoro-onboarding");
     if (seen === "true") {
@@ -73,6 +87,14 @@ export default function AppShell() {
   const finishOnboarding = () => {
     setHasSeenOnboarding(true);
     localStorage.setItem("flowmodoro-onboarding", "true");
+  };
+
+  const handleNameSession = (name: string, tags: string[]) => {
+    const sessions = useSessionsStore.getState().sessions;
+    const last = sessions[sessions.length - 1];
+    if (last) {
+      useSessionsStore.getState().updateSession(last.timestamp, { name, tags });
+    }
   };
 
   // --- Onboarding ---
@@ -143,7 +165,15 @@ export default function AppShell() {
         <AnimatePresence mode="wait">
           {view === "timer" && (
             <motion.div key="timer" {...viewTransition}>
-              <TimerSection />
+              <TimerSection
+                appState={timer.appState}
+                time={timer.time}
+                onStart={timer.start}
+                onBreak={timer.takeBreak}
+                onEnd={timer.end}
+                onDismissCompleted={timer.dismissCompleted}
+                onNameSession={handleNameSession}
+              />
             </motion.div>
           )}
           {view === "stats" && (

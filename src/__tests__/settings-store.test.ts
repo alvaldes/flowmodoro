@@ -6,6 +6,9 @@ describe("settings-store", () => {
     useSettingsStore.setState({
       restRatio: 0.2,
       darkMode: false,
+      alarmSound: "gentle-chime",
+      volume: 0.5,
+      notificationsEnabled: false,
     });
   });
 
@@ -33,5 +36,29 @@ describe("settings-store", () => {
     expect(useSettingsStore.getState().darkMode).toBe(true);
     useSettingsStore.getState().toggleDarkMode();
     expect(useSettingsStore.getState().darkMode).toBe(false);
+  });
+
+  it("setAlarmSound updates the alarm sound", () => {
+    useSettingsStore.getState().setAlarmSound("classic-alarm");
+    expect(useSettingsStore.getState().alarmSound).toBe("classic-alarm");
+  });
+
+  it("setVolume updates the volume", () => {
+    useSettingsStore.getState().setVolume(0.8);
+    expect(useSettingsStore.getState().volume).toBe(0.8);
+  });
+
+  it("setVolume clamps to 0-1 range", () => {
+    useSettingsStore.getState().setVolume(1.5);
+    expect(useSettingsStore.getState().volume).toBe(1);
+    useSettingsStore.getState().setVolume(-0.5);
+    expect(useSettingsStore.getState().volume).toBe(0);
+  });
+
+  it("toggleNotifications flips the value", () => {
+    useSettingsStore.getState().toggleNotifications();
+    expect(useSettingsStore.getState().notificationsEnabled).toBe(true);
+    useSettingsStore.getState().toggleNotifications();
+    expect(useSettingsStore.getState().notificationsEnabled).toBe(false);
   });
 });
