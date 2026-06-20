@@ -1,7 +1,9 @@
 import { useSettingsStore } from "@/stores/settings-store";
 import { useSessionsStore } from "@/stores/sessions-store";
+import { useAudioAlert } from "@/hooks/useAudioAlert";
 import { ALARM_SOUNDS } from "@/lib/constants";
 import type { AlarmSoundId } from "@/stores/types";
+import { Switch } from "@/components/ui/switch";
 
 export default function SettingsSection() {
   const {
@@ -17,6 +19,7 @@ export default function SettingsSection() {
     toggleNotifications,
   } = useSettingsStore();
   const sessionCount = useSessionsStore((s) => s.sessions.length);
+  const { preview } = useAudioAlert();
 
   return (
     <div style={{ marginTop: "24px" }}>
@@ -152,39 +155,7 @@ export default function SettingsSection() {
             Switch to dark theme
           </div>
         </div>
-        <button
-          onClick={toggleDarkMode}
-          role="switch"
-          aria-checked={darkMode}
-          aria-label="Toggle dark mode"
-          style={{
-            width: "48px",
-            height: "28px",
-            borderRadius: "14px",
-            background: darkMode ? "var(--accent)" : "var(--border)",
-            border: "none",
-            cursor: "pointer",
-            position: "relative",
-            transition:
-              "background var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
-            padding: 0,
-          }}
-        >
-          <div
-            style={{
-              width: "22px",
-              height: "22px",
-              borderRadius: "50%",
-              background: "white",
-              position: "absolute",
-              top: "3px",
-              left: darkMode ? "23px" : "3px",
-              transition:
-                "left var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
-            }}
-          />
-        </button>
+        <Switch checked={darkMode} onCheckedChange={toggleDarkMode} aria-label="Toggle dark mode" />
       </div>
 
       {/* Alarm Sound */}
@@ -221,11 +192,7 @@ export default function SettingsSection() {
               ))}
             </select>
             <button
-              onClick={() => {
-                const audio = new Audio(ALARM_SOUNDS.find(s => s.id === alarmSound)?.file ?? ALARM_SOUNDS[0].file);
-                audio.volume = volume;
-                audio.play().catch(() => {});
-              }}
+              onClick={() => preview(alarmSound)}
               aria-label="Preview alarm sound"
               style={{
                 background: "var(--accent-dim)", color: "var(--accent)",
@@ -275,27 +242,7 @@ export default function SettingsSection() {
             Show notifications when focus ends
           </div>
         </div>
-        <button
-          onClick={toggleNotifications}
-          role="switch"
-          aria-checked={notificationsEnabled}
-          aria-label="Toggle browser notifications"
-          style={{
-            width: "48px", height: "28px", borderRadius: "14px",
-            background: notificationsEnabled ? "var(--accent)" : "var(--border)",
-            border: "none", cursor: "pointer", position: "relative",
-            transition: "background var(--motion-fast, 150ms) var(--ease-standard)",
-            padding: 0,
-          }}
-        >
-          <div style={{
-            width: "22px", height: "22px", borderRadius: "50%",
-            background: "white", position: "absolute", top: "3px",
-            left: notificationsEnabled ? "23px" : "3px",
-            transition: "left var(--motion-fast, 150ms) var(--ease-standard)",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
-          }} />
-        </button>
+        <Switch checked={notificationsEnabled} onCheckedChange={toggleNotifications} aria-label="Toggle browser notifications" />
       </div>
 
       {/* Session count */}
