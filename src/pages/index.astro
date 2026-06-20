@@ -1,10 +1,8 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import AppShell from "@/components/react/AppShell";
 ---
 
 <BaseLayout title="Flowmodoro — Intelligent Focus Timer">
-  <div class="app-container">
-    <!-- AppShell will be added in PR 4 -->
-    <p class="text-brand-muted p-4">Loading Flowmodoro...</p>
-  </div>
+  <AppShell client:load />
 </BaseLayout>
