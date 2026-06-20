@@ -1,1 +1,120 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-brand-bg: oklch(99% 0.002 240);
+  --color-brand-surface: oklch(100% 0 0);
+  --color-brand-fg: oklch(18% 0.012 250);
+  --color-brand-muted: oklch(54% 0.012 250);
+  --color-brand-border: oklch(92% 0.005 250);
+  --color-brand-accent: oklch(62% 0.22 255);
+  --color-brand-accent-dim: oklch(62% 0.22 255 / 0.12);
+  --color-tick-bg: oklch(92% 0.005 250);
+  --color-ring-bg: oklch(92% 0.005 250);
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-fast: 150ms;
+  --motion-base: 250ms;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
+/* CSS custom properties for SVG fills and framer-motion transitions */
+:root {
+  --bg: oklch(99% 0.002 240);
+  --surface: oklch(100% 0 0);
+  --fg: oklch(18% 0.012 250);
+  --muted: oklch(54% 0.012 250);
+  --border: oklch(92% 0.005 250);
+  --accent: oklch(62% 0.22 255);
+  --accent-dim: oklch(62% 0.22 255 / 0.12);
+  --nav-bg: oklch(100% 0 0 / 0.85);
+  --tick-bg: oklch(92% 0.005 250);
+  --ring-bg: oklch(92% 0.005 250);
+}
+
+.dark {
+  --bg: oklch(12% 0.008 250);
+  --surface: oklch(16% 0.01 250);
+  --fg: oklch(92% 0.005 250);
+  --muted: oklch(58% 0.01 250);
+  --border: oklch(25% 0.008 250);
+  --accent-dim: oklch(62% 0.22 255 / 0.15);
+  --nav-bg: oklch(16% 0.01 250 / 0.92);
+  --tick-bg: oklch(25% 0.008 250);
+  --ring-bg: oklch(25% 0.008 250);
+}
+
+/* System preference dark (respects OS dark mode) */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --bg: oklch(12% 0.008 250);
+    --surface: oklch(16% 0.01 250);
+    --fg: oklch(92% 0.005 250);
+    --muted: oklch(58% 0.01 250);
+    --border: oklch(25% 0.008 250);
+    --accent-dim: oklch(62% 0.22 255 / 0.15);
+    --nav-bg: oklch(16% 0.01 250 / 0.92);
+    --tick-bg: oklch(25% 0.008 250);
+    --ring-bg: oklch(25% 0.008 250);
+  }
+}
+
+/* Base styles */
+@layer base {
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background var(--motion-base) var(--ease-standard), color var(--motion-base) var(--ease-standard);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3 {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  button {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+    cursor: pointer;
+    border: none;
+    border-radius: var(--radius-md);
+    transition: background var(--motion-fast) var(--ease-standard),
+                transform var(--motion-fast) var(--ease-standard),
+                box-shadow var(--motion-fast) var(--ease-standard);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px;
+  }
+
+  button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+  }
+
+  button:active {
+    transform: scale(0.97);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

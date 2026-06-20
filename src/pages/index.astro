@@ -1,17 +1,10 @@
 ---
-import '@/styles/global.css';
+import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Flowmodoro</title>
-	</head>
-	<body>
-		<h1 class="text-3xl font-bold underline">Flowmodoro</h1>
-	</body>
-</html>
+<BaseLayout title="Flowmodoro — Intelligent Focus Timer">
+  <div class="app-container">
+    <!-- AppShell will be added in PR 4 -->
+    <p class="text-brand-muted p-4">Loading Flowmodoro...</p>
+  </div>
+</BaseLayout>
