@@ -26,8 +26,6 @@ const viewTransition = {
 export default function AppShell() {
   const [view, setView] = useState<AppView>("timer");
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
-  const [lastSessionName, setLastSessionName] = useState("");
-
   const darkMode = useSettingsStore((s) => s.darkMode);
   const notificationsEnabled = useSettingsStore((s) => s.notificationsEnabled);
 
