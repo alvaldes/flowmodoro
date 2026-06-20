@@ -13,6 +13,13 @@ export const useSessionsStore = create<SessionsStore>()(
       addSession: (session: Session) =>
         set((state) => ({ sessions: [...state.sessions, session] })),
 
+      updateSession: (timestamp: number, patch: Partial<Pick<Session, "name" | "tags">>) =>
+        set((state) => ({
+          sessions: state.sessions.map((s) =>
+            s.timestamp === timestamp ? { ...s, ...patch } : s
+          ),
+        })),
+
       clearSessions: () => set({ sessions: [] }),
     }),
     {

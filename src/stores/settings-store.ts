@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { SettingsActions, SettingsState } from "./types";
+import type { AlarmSoundId, SettingsActions, SettingsState } from "./types";
 import { STORAGE_KEYS, TIMER } from "@/lib/constants";
 
 type SettingsStore = SettingsState & SettingsActions;
@@ -15,23 +15,33 @@ export const useSettingsStore = create<SettingsStore>()(
     (set) => ({
       restRatio: TIMER.DEFAULT_REST_RATIO,
       darkMode: getSystemDarkMode(),
+      alarmSound: "gentle-chime" as AlarmSoundId,
+      volume: 0.5,
+      notificationsEnabled: false,
 
       setRestRatio: (ratio: number) =>
         set({
-          restRatio: Math.min(
-            Math.max(ratio, TIMER.MIN_REST_RATIO),
-            TIMER.MAX_REST_RATIO
-          ),
+          restRatio: Math.min(Math.max(ratio, TIMER.MIN_REST_RATIO), TIMER.MAX_REST_RATIO),
         }),
 
-      toggleDarkMode: () =>
-        set((state) => ({ darkMode: !state.darkMode })),
+      toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
+
+      setAlarmSound: (sound: AlarmSoundId) => set({ alarmSound: sound }),
+
+      setVolume: (volume: number) =>
+        set({ volume: Math.min(Math.max(volume, 0), 1) }),
+
+      toggleNotifications: () =>
+        set((state) => ({ notificationsEnabled: !state.notificationsEnabled })),
     }),
     {
       name: STORAGE_KEYS.SETTINGS,
       partialize: (state) => ({
         restRatio: state.restRatio,
         darkMode: state.darkMode,
+        alarmSound: state.alarmSound,
+        volume: state.volume,
+        notificationsEnabled: state.notificationsEnabled,
       }),
       skipHydration: true,
     }
