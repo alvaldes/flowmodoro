@@ -23,3 +23,12 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 .vercel
+
+# Design handoff assets (keep as reference, not in repo)
+brand-spec.md
+DESIGN-HANDOFF.md
+DESIGN-MANIFEST.json
+*.HEIC
+*.png
+*.jpg
+*.webp
