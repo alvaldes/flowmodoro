@@ -15,17 +15,30 @@ const OUTER_R = 148;
 const TICK_COUNT = 60;
 
 export default function AnalogDial({ time, state, reducedMotion }: AnalogDialProps) {
+  // ---------------------------------------------------------------------------
+  // FUTURE: to restore alternate ring/tick behavior for durations >=1h
+  // (e.g. tick per hour and ring per minute), uncomment the block below
+  // and remove the simplified version.
+  //
+  // const ringProgress = state === "resting"
+  //   ? 0
+  //   : time < 3600
+  //     ? (time % 60) / 60       // < 1h: ring wraps every minute
+  //     : (time % 3600) / 3600;  // >= 1h: ring wraps every hour
+  //
+  // const ticksFilled = state === "resting"
+  //   ? 0
+  //   : time < 3600
+  //     ? Math.floor((time % 3600) / 60)  // < 1h: one tick per minute
+  //     : Math.floor(time / 3600);         // >= 1h: one tick per hour
+  // ---------------------------------------------------------------------------
   const ringProgress = state === "resting"
     ? 0
-    : time < 3600
-      ? (time % 60) / 60
-      : (time % 3600) / 3600;
+    : (time % 60) / 60;
 
   const ticksFilled = state === "resting"
     ? 0
-    : time < 3600
-      ? Math.floor((time % 3600) / 60)
-      : Math.floor(time / 3600);
+    : Math.floor((time % 3600) / 60);
 
   const ticks = useMemo(() => {
     const arr: { x1: number; y1: number; x2: number; y2: number; filled: boolean }[] = [];
@@ -156,17 +169,22 @@ export default function AnalogDial({ time, state, reducedMotion }: AnalogDialPro
               letterSpacing: "0.06em",
             }}
           >
-            {time < 3600 ? (
-              <>
-                <text x={CX - 30} y={CY - 40} textAnchor="middle">MIN</text>
-                <text x={CX + 30} y={CY - 40} textAnchor="middle">SEC</text>
-              </>
-            ) : (
-              <>
-                <text x={CX - 48} y={CY - 40} textAnchor="middle">HR</text>
-                <text x={CX + 35} y={CY - 40} textAnchor="middle">MIN</text>
-              </>
-            )}
+            {/*
+              FUTURE: to restore HR/MIN labels for >=1h, replace the block below with:
+              {time < 3600 ? (
+                <>
+                  <text x={CX - 30} y={CY - 40} textAnchor="middle">MIN</text>
+                  <text x={CX + 30} y={CY - 40} textAnchor="middle">SEC</text>
+                </>
+              ) : (
+                <>
+                  <text x={CX - 48} y={CY - 40} textAnchor="middle">HR</text>
+                  <text x={CX + 35} y={CY - 40} textAnchor="middle">MIN</text>
+                </>
+              )}
+            */}
+            <text x={CX - 30} y={CY - 40} textAnchor="middle">MIN</text>
+            <text x={CX + 30} y={CY - 40} textAnchor="middle">SEC</text>
           </g>
         )}
 

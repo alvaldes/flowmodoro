@@ -17,10 +17,10 @@ describe("formatTime", () => {
     expect(formatTime(3599)).toBe("59:59");
   });
 
-  it("formats hours correctly", () => {
-    expect(formatTime(3600)).toBe("1:00:00");
-    expect(formatTime(3661)).toBe("1:01:01");
-    expect(formatTime(7384)).toBe("2:03:04");
+  it("formats hours as mm:ss (always shows seconds)", () => {
+    expect(formatTime(3600)).toBe("60:00");
+    expect(formatTime(3661)).toBe("61:01");
+    expect(formatTime(7384)).toBe("123:04");
   });
 
   it("pads single digit minutes and seconds", () => {
