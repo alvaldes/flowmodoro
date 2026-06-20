@@ -24,13 +24,8 @@ pnpm-debug.log*
 .idea/
 .vercel
 
-# Design handoff assets (keep as reference, not in repo)
-brand-spec.md
-DESIGN-HANDOFF.md
-DESIGN-MANIFEST.json
+# Generated/temp image artifacts
 *.HEIC
-*.png
-*.jpg
 *.webp
 
 # PWA icons (track intentionally)

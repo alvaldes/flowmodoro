@@ -42,7 +42,7 @@ export default function TimerSection({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        paddingTop: "24px",
+        paddingTop: "16px",
       }}
     >
       <AnalogDial time={time} state={appState} reducedMotion={reducedMotion} />
@@ -51,9 +51,9 @@ export default function TimerSection({
         <p
           style={{
             fontSize: "13px",
-            color: "var(--muted)",
+            color: "var(--text-secondary)",
             textAlign: "center",
-            marginTop: "8px",
+            marginTop: "12px",
           }}
         >
           Last session: {formatDuration(time)}
@@ -73,7 +73,7 @@ export default function TimerSection({
             style={{
               fontSize: "20px",
               fontWeight: 600,
-              marginBottom: "16px",
+              marginBottom: "20px",
               letterSpacing: "-0.01em",
             }}
           >
@@ -83,13 +83,15 @@ export default function TimerSection({
           <div
             style={{
               background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius-lg, 16px)",
+              borderRadius: "var(--radius-lg, 22px)",
               padding: "20px",
-              marginBottom: "16px",
+              marginBottom: "20px",
               display: "flex",
               flexDirection: "column",
               gap: "12px",
+              boxShadow: "var(--neu-raised-md)",
+              transition:
+                "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
             }}
           >
             <input
@@ -100,14 +102,15 @@ export default function TimerSection({
               aria-label="Session name"
               style={{
                 background: "var(--bg)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius-sm, 8px)",
+                borderRadius: "var(--radius-sm, 10px)",
                 padding: "12px 16px",
                 fontSize: "14px",
                 color: "var(--fg)",
-                fontFamily: "var(--font-body)",
-                outline: "none",
+                border: "none",
                 width: "100%",
+                boxShadow: "var(--neu-pressed-xs)",
+                transition:
+                  "box-shadow var(--motion-fast, 150ms) var(--ease-standard)",
               }}
             />
             <input
@@ -118,20 +121,22 @@ export default function TimerSection({
               aria-label="Session tags"
               style={{
                 background: "var(--bg)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius-sm, 8px)",
+                borderRadius: "var(--radius-sm, 10px)",
                 padding: "12px 16px",
                 fontSize: "14px",
                 color: "var(--fg)",
-                fontFamily: "var(--font-body)",
-                outline: "none",
+                border: "none",
                 width: "100%",
+                boxShadow: "var(--neu-pressed-xs)",
+                transition:
+                  "box-shadow var(--motion-fast, 150ms) var(--ease-standard)",
               }}
             />
           </div>
 
           <button
             onClick={handleSaveName}
+            aria-label="Save session and continue"
             style={{
               width: "100%",
               background: "var(--accent)",
@@ -140,18 +145,32 @@ export default function TimerSection({
               fontWeight: 600,
               fontSize: "16px",
               letterSpacing: "0.02em",
-              borderRadius: "var(--radius-md, 12px)",
+              borderRadius: "var(--radius-md, 16px)",
               border: "none",
               cursor: "pointer",
+              boxShadow: "var(--neu-accent-raised)",
+              transition:
+                "box-shadow var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), transform var(--motion-fast, 150ms) var(--ease-standard)",
             }}
-            aria-label="Save session and continue"
+            onMouseDown={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                "var(--neu-accent-pressed)";
+            }}
+            onMouseUp={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                "var(--neu-accent-raised)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                "var(--neu-accent-raised)";
+            }}
           >
             Done
           </button>
         </div>
       )}
 
-      {/* Action buttons (only when NOT completed) */}
+      {/* Action buttons */}
       {appState !== "completed" && (
         <div
           style={{
@@ -175,9 +194,24 @@ export default function TimerSection({
                   fontWeight: 600,
                   fontSize: "16px",
                   letterSpacing: "0.02em",
-                  borderRadius: "var(--radius-md, 12px)",
+                  borderRadius: "var(--radius-md, 16px)",
                   border: "none",
                   cursor: "pointer",
+                  boxShadow: "var(--neu-accent-raised)",
+                  transition:
+                    "box-shadow var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), transform var(--motion-fast, 150ms) var(--ease-standard)",
+                }}
+                onMouseDown={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                    "var(--neu-accent-pressed)";
+                }}
+                onMouseUp={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                    "var(--neu-accent-raised)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                    "var(--neu-accent-raised)";
                 }}
               >
                 Start New Flow
@@ -190,10 +224,25 @@ export default function TimerSection({
                     width: "100%",
                     background: "var(--surface)",
                     color: "var(--fg)",
-                    border: "1px solid var(--border)",
-                    padding: "12px 20px",
-                    borderRadius: "var(--radius-md, 12px)",
+                    padding: "14px 20px",
+                    borderRadius: "var(--radius-md, 16px)",
                     cursor: "pointer",
+                    border: "none",
+                    boxShadow: "var(--neu-raised-sm)",
+                    transition:
+                      "box-shadow var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), transform var(--motion-fast, 150ms) var(--ease-standard)",
+                  }}
+                  onMouseDown={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                      "var(--neu-pressed-sm)";
+                  }}
+                  onMouseUp={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                      "var(--neu-raised-sm)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                      "var(--neu-raised-sm)";
                   }}
                 >
                   Save and Close Session
@@ -211,10 +260,25 @@ export default function TimerSection({
                   flex: 1,
                   background: "var(--surface)",
                   color: "var(--fg)",
-                  border: "1px solid var(--border)",
-                  padding: "12px 20px",
-                  borderRadius: "var(--radius-md, 12px)",
+                  padding: "14px 20px",
+                  borderRadius: "var(--radius-md, 16px)",
                   cursor: "pointer",
+                  border: "none",
+                  boxShadow: "var(--neu-raised-sm)",
+                  transition:
+                    "box-shadow var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), transform var(--motion-fast, 150ms) var(--ease-standard)",
+                }}
+                onMouseDown={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                    "var(--neu-pressed-sm)";
+                }}
+                onMouseUp={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                    "var(--neu-raised-sm)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                    "var(--neu-raised-sm)";
                 }}
               >
                 Take Break
@@ -230,9 +294,24 @@ export default function TimerSection({
                   fontWeight: 600,
                   fontSize: "16px",
                   letterSpacing: "0.02em",
-                  borderRadius: "var(--radius-md, 12px)",
+                  borderRadius: "var(--radius-md, 16px)",
                   border: "none",
                   cursor: "pointer",
+                  boxShadow: "var(--neu-accent-raised)",
+                  transition:
+                    "box-shadow var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), transform var(--motion-fast, 150ms) var(--ease-standard)",
+                }}
+                onMouseDown={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                    "var(--neu-accent-pressed)";
+                }}
+                onMouseUp={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                    "var(--neu-accent-raised)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                    "var(--neu-accent-raised)";
                 }}
               >
                 End Flow
@@ -252,9 +331,24 @@ export default function TimerSection({
                 fontWeight: 600,
                 fontSize: "16px",
                 letterSpacing: "0.02em",
-                borderRadius: "var(--radius-md, 12px)",
+                borderRadius: "var(--radius-md, 16px)",
                 border: "none",
                 cursor: "pointer",
+                boxShadow: "var(--neu-accent-raised)",
+                transition:
+                  "box-shadow var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), transform var(--motion-fast, 150ms) var(--ease-standard)",
+              }}
+              onMouseDown={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                  "var(--neu-accent-pressed)";
+              }}
+              onMouseUp={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                  "var(--neu-accent-raised)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                  "var(--neu-accent-raised)";
               }}
             >
               Resume Focus

@@ -35,31 +35,29 @@ export default function StatsSection() {
 
   return (
     <div style={{ marginTop: "24px" }}>
-      {/* Stat cards */}
+      {/* Stat cards — neumorphic raised */}
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr 1fr",
           gap: "12px",
-          marginBottom: "24px",
+          marginBottom: "28px",
         }}
       >
         <div
-          className="stats-card"
           style={{
             background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius-lg, 16px)",
-            padding: "16px",
+            borderRadius: "var(--radius-lg, 22px)",
+            padding: "18px 12px",
             textAlign: "center",
-            transition:
-              "background var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
+            boxShadow: "var(--neu-raised-md)",
+            transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
           }}
         >
           <div
             style={{
               fontSize: "10px",
-              color: "var(--muted)",
+              color: "var(--text-secondary)",
               textTransform: "uppercase",
               letterSpacing: "0.08em",
               marginBottom: "6px",
@@ -72,27 +70,26 @@ export default function StatsSection() {
               fontSize: "20px",
               fontWeight: 600,
               letterSpacing: "-0.01em",
+              color: "var(--fg)",
             }}
           >
             {formatDuration(totalFocus)}
           </div>
         </div>
         <div
-          className="stats-card"
           style={{
             background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius-lg, 16px)",
-            padding: "16px",
+            borderRadius: "var(--radius-lg, 22px)",
+            padding: "18px 12px",
             textAlign: "center",
-            transition:
-              "background var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
+            boxShadow: "var(--neu-raised-md)",
+            transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
           }}
         >
           <div
             style={{
               fontSize: "10px",
-              color: "var(--muted)",
+              color: "var(--text-secondary)",
               textTransform: "uppercase",
               letterSpacing: "0.08em",
               marginBottom: "6px",
@@ -105,27 +102,26 @@ export default function StatsSection() {
               fontSize: "20px",
               fontWeight: 600,
               letterSpacing: "-0.01em",
+              color: "var(--fg)",
             }}
           >
             {sessionCount}
           </div>
         </div>
         <div
-          className="stats-card"
           style={{
             background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius-lg, 16px)",
-            padding: "16px",
+            borderRadius: "var(--radius-lg, 22px)",
+            padding: "18px 12px",
             textAlign: "center",
-            transition:
-              "background var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
+            boxShadow: "var(--neu-raised-md)",
+            transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
           }}
         >
           <div
             style={{
               fontSize: "10px",
-              color: "var(--muted)",
+              color: "var(--text-secondary)",
               textTransform: "uppercase",
               letterSpacing: "0.08em",
               marginBottom: "6px",
@@ -138,6 +134,7 @@ export default function StatsSection() {
               fontSize: "20px",
               fontWeight: 600,
               letterSpacing: "-0.01em",
+              color: "var(--fg)",
             }}
           >
             {formatDuration(todayFocus)}
@@ -152,6 +149,7 @@ export default function StatsSection() {
           fontWeight: 600,
           marginBottom: "14px",
           letterSpacing: "-0.01em",
+          color: "var(--fg)",
         }}
       >
         This Week
@@ -160,12 +158,11 @@ export default function StatsSection() {
       <div
         style={{
           background: "var(--surface)",
-          border: "1px solid var(--border)",
-          borderRadius: "var(--radius-lg, 16px)",
+          borderRadius: "var(--radius-lg, 22px)",
           padding: "20px",
-          marginBottom: "24px",
-          transition:
-            "background var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
+          marginBottom: "28px",
+          boxShadow: "var(--neu-raised-md)",
+          transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
         }}
         role="img"
         aria-label={`Focus minutes per day: ${weekData
@@ -179,56 +176,55 @@ export default function StatsSection() {
             gap: "4px",
             height: "120px",
             paddingBottom: "8px",
-            borderBottom: "1px solid var(--border)",
+            borderBottom: "none",
           }}
         >
           {weekData.map((m, i) => (
-            <div
-              key={i}
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "6px",
-              }}
-            >
               <div
+                key={i}
                 style={{
-                  width: "100%",
-                  background:
-                    i === 6 ? "var(--accent)" : "var(--tick-bg)",
-                  borderRadius:
-                    "var(--radius-sm, 8px) var(--radius-sm, 8px) 0 0",
-                  height: `${Math.max((m / maxDay) * 100, 4)}%`,
-                  transition:
-                    "background var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), height 0.3s ease",
-                  minHeight: "4px",
-                  opacity: i === 6 ? 1 : 0.5,
-                }}
-              />
-              <span
-                style={{
-                  fontSize: "9px",
-                  color: "var(--muted)",
-                  letterSpacing: "0.02em",
-                  textTransform: "uppercase",
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "6px",
                 }}
               >
-                {DAY_LABELS[i]}
-              </span>
-            </div>
+                <div
+                  style={{
+                    width: "100%",
+                    background: i === 6 ? "var(--accent)" : "var(--tick-bg)",
+                    borderRadius: "var(--radius-sm, 10px) var(--radius-sm, 10px) 0 0",
+                    height: `${Math.max((m / maxDay) * 100, 4)}%`,
+                    transition: "background var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), height 0.3s ease",
+                    minHeight: "6px",
+                    opacity: i === 6 ? 1 : 0.45,
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: "9px",
+                    color: i === 6 ? "var(--text-secondary)" : "var(--text-tertiary)",
+                    letterSpacing: "0.02em",
+                    textTransform: "uppercase",
+                    fontWeight: i === 6 ? 600 : 400,
+                  }}
+                >
+                  {DAY_LABELS[i]}
+                </span>
+              </div>
           ))}
         </div>
       </div>
 
-      {/* History */}
+      {/* History title */}
       <h3
         style={{
           fontSize: "15px",
           fontWeight: 600,
           marginBottom: "14px",
           letterSpacing: "-0.01em",
+          color: "var(--fg)",
         }}
       >
         History
@@ -237,7 +233,7 @@ export default function StatsSection() {
       {sessions.length === 0 ? (
         <p
           style={{
-            color: "var(--muted)",
+            color: "var(--text-secondary)",
             textAlign: "center",
             padding: "32px 16px",
             fontSize: "14px",
@@ -246,15 +242,21 @@ export default function StatsSection() {
           No sessions yet. Start your first flow!
         </p>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           {[...sessions].reverse().map((s, i) => (
-            <div key={i} style={{
-              display: "flex", flexDirection: "column",
-              padding: "14px 16px",
-              background: "var(--surface)", border: "1px solid var(--border)",
-              borderRadius: "var(--radius-md, 12px)", fontSize: "14px",
-              transition: "background var(--motion-base, 250ms) var(--ease-standard)"
-            }}>
+            <div
+              key={i}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                padding: "14px 18px",
+                background: "var(--surface)",
+                borderRadius: "var(--radius-md, 16px)",
+                fontSize: "14px",
+                boxShadow: "var(--neu-raised-sm)",
+                transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
+              }}
+            >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <span style={{ color: "var(--fg)", fontWeight: 500 }}>
@@ -262,7 +264,7 @@ export default function StatsSection() {
                       weekday: "short", month: "short", day: "numeric",
                     })}
                   </span>
-                  <span style={{ color: "var(--muted)", marginLeft: "8px" }}>
+                  <span style={{ color: "var(--text-tertiary)", marginLeft: "8px" }}>
                     {new Date(s.timestamp).toLocaleTimeString([], {
                       hour: "2-digit", minute: "2-digit",
                     })}
@@ -280,12 +282,19 @@ export default function StatsSection() {
                     </span>
                   )}
                   {s.tags?.map((tag, ti) => (
-                    <span key={ti} style={{
-                      fontSize: "10px", fontWeight: 500,
-                      background: "var(--accent-dim)", color: "var(--accent)",
-                      padding: "2px 8px", borderRadius: "4px",
-                      textTransform: "uppercase", letterSpacing: "0.04em",
-                    }}>
+                    <span
+                      key={ti}
+                      style={{
+                        fontSize: "10px",
+                        fontWeight: 500,
+                        background: "var(--accent-dim)",
+                        color: "var(--accent)",
+                        padding: "2px 8px",
+                        borderRadius: "6px",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.04em",
+                      }}
+                    >
                       {tag}
                     </span>
                   ))}

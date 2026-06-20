@@ -54,9 +54,9 @@ export default function Onboarding({ onFinish }: OnboardingProps) {
         aria-label="Onboarding steps"
         style={{
           display: "flex",
-          gap: "6px",
+          gap: "8px",
           justifyContent: "center",
-          marginBottom: "8px",
+          marginBottom: "12px",
         }}
       >
         {slides.map((_, i) => (
@@ -69,14 +69,15 @@ export default function Onboarding({ onFinish }: OnboardingProps) {
               width: i === step ? "28px" : "8px",
               height: "8px",
               borderRadius: "4px",
-              background: i === step ? "var(--accent)" : "var(--border)",
+              background: i === step ? "var(--accent)" : "var(--tick-bg)",
+              boxShadow: i === step ? "none" : "var(--neu-pressed-xs)",
               transition: "all 0.35s var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
             }}
           />
         ))}
       </div>
 
-      {/* Slide content */}
+      {/* Slide content — neumorphic raised card */}
       <AnimatePresence mode="wait">
         <motion.div
           key={step}
@@ -88,15 +89,15 @@ export default function Onboarding({ onFinish }: OnboardingProps) {
           aria-label={slides[step].title}
           style={{
             background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius-lg, 16px)",
+            borderRadius: "var(--radius-lg, 22px)",
             padding: "32px 24px",
             flex: 1,
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             textAlign: "center",
-            transition: "background var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
+            boxShadow: "var(--neu-raised-md)",
+            transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
           }}
         >
           <p
@@ -240,7 +241,7 @@ export default function Onboarding({ onFinish }: OnboardingProps) {
           </h2>
           <p
             style={{
-              color: "var(--muted)",
+              color: "var(--text-secondary)",
               fontSize: "16px",
               lineHeight: "1.65",
               maxWidth: "34ch",
@@ -255,7 +256,6 @@ export default function Onboarding({ onFinish }: OnboardingProps) {
       {/* Advance button */}
       <div style={{ display: "flex", gap: "12px", marginTop: "auto" }}>
         <button
-          className="btn-primary"
           style={{
             flex: 1,
             background: "var(--accent)",
@@ -264,6 +264,11 @@ export default function Onboarding({ onFinish }: OnboardingProps) {
             fontWeight: 600,
             fontSize: "16px",
             letterSpacing: "0.02em",
+            borderRadius: "var(--radius-md, 16px)",
+            border: "none",
+            cursor: "pointer",
+            boxShadow: "var(--neu-accent-raised)",
+            transition: "box-shadow var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), transform var(--motion-fast, 150ms) var(--ease-standard)",
           }}
           onClick={advance}
           aria-label={
@@ -271,6 +276,15 @@ export default function Onboarding({ onFinish }: OnboardingProps) {
               ? `Next: ${slides[step + 1].title}`
               : "Start using Flowmodoro"
           }
+          onMouseDown={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.boxShadow = "var(--neu-accent-pressed)";
+          }}
+          onMouseUp={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.boxShadow = "var(--neu-accent-raised)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.boxShadow = "var(--neu-accent-raised)";
+          }}
         >
           {step < slides.length - 1 ? "Next" : "Start"}
         </button>

@@ -5,128 +5,238 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme {
-  --color-brand-bg: oklch(99% 0.002 240);
-  --color-brand-surface: oklch(100% 0 0);
-  --color-brand-fg: oklch(18% 0.012 250);
-  --color-brand-muted: oklch(54% 0.012 250);
-  --color-brand-border: oklch(92% 0.005 250);
-  --color-brand-accent: oklch(62% 0.22 255);
-  --color-brand-accent-dim: oklch(62% 0.22 255 / 0.12);
-  --color-tick-bg: oklch(92% 0.005 250);
-  --color-ring-bg: oklch(92% 0.005 250);
+/* ════════════════════════════════════════════════════
+   NEUMORPHIC MINIMALIST — Theme Colors
+   ════════════════════════════════════════════════════
+   ▸ :root / .dark  = SINGLE SOURCE OF TRUTH (colores)
+   ▸ @theme         = solo motion/radii (compile-time)
+   ▸ @theme inline  = bridge Shadcn ← CSS vars
+   ════════════════════════════════════════════════════ */
 
-  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-  --motion-fast: 150ms;
-  --motion-base: 250ms;
-
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-}
-
-/* CSS custom properties for SVG fills and framer-motion transitions */
 :root {
-  --bg: oklch(99% 0.002 240);
-  --surface: oklch(100% 0 0);
-  --fg: oklch(18% 0.012 250);
-  --muted: oklch(54% 0.012 250);
-  --border: oklch(92% 0.005 250);
-  --accent: oklch(62% 0.22 255);
-  --accent-dim: oklch(62% 0.22 255 / 0.12);
-  --nav-bg: oklch(100% 0 0 / 0.85);
-  --tick-bg: oklch(92% 0.005 250);
-  --ring-bg: oklch(92% 0.005 250);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  /* ══════════════════════════════════
+     NEUMORPHIC PALETTE (editar acá)
+     ══════════════════════════════════ */
+
+  /* Surfaces */
+  --bg: oklch(87% 0.005 260);
+  --surface: oklch(87% 0.005 260);
+  --nav-bg: oklch(87% 0.005 260);
+  --border: oklch(79% 0.005 260);
+
+  /* Text */
+  --fg: oklch(18% 0.012 260);
+  --text-secondary: oklch(48% 0.008 260);
+  --text-tertiary: oklch(66% 0.005 260);
+
+  /* Accent */
+  --accent: oklch(60% 0.22 255);
+  --accent-dim: oklch(60% 0.22 255 / 0.14);
+
+  /* Component-specific */
+  --tick-bg: oklch(72% 0.006 260);
+  --ring-bg: oklch(72% 0.006 260);
+
+  /* ═══════ Neumorphic Shadows ═══════ */
+
+  /* Shadow colors */
+  --neu-light: oklch(100% 0 0);
+  --neu-dark: oklch(68% 0.01 260 / 0.35);
+
+  /* Raised (convex) */
+  --neu-raised-xs: 2px 2px 4px var(--neu-dark), -2px -2px 4px var(--neu-light);
+  --neu-raised-sm: 3px 3px 7px var(--neu-dark), -3px -3px 7px var(--neu-light);
+  --neu-raised-md: 5px 5px 12px var(--neu-dark), -5px -5px 12px var(--neu-light);
+  --neu-raised-lg: 8px 8px 18px var(--neu-dark), -8px -8px 18px var(--neu-light);
+  --neu-raised-xl: 10px 10px 24px var(--neu-dark), -10px -10px 24px var(--neu-light);
+
+  /* Pressed (concave) */
+  --neu-pressed-xs: inset 1.5px 1.5px 3px var(--neu-dark), inset -1.5px -1.5px 3px var(--neu-light);
+  --neu-pressed-sm: inset 2px 2px 5px var(--neu-dark), inset -2px -2px 5px var(--neu-light);
+  --neu-pressed-md: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
+  --neu-pressed-lg: inset 6px 6px 14px var(--neu-dark), inset -6px -6px 14px var(--neu-light);
+
+  /* Accent shadows */
+  --neu-accent-dark: oklch(52% 0.2 255 / 0.4);
+  --neu-accent-raised: 3px 3px 8px var(--neu-accent-dark), -3px -3px 8px oklch(80% 0.15 255 / 0.3);
+  --neu-accent-pressed: inset 2px 2px 5px var(--neu-accent-dark), inset -2px -2px 5px oklch(80% 0.15 255 / 0.2);
+
+  /* Navigation */
+  --neu-nav-raised: 0 -6px 16px var(--neu-dark), 0 -2px 8px var(--neu-dark);
+
+  /* ═══════ Shadcn / Base UI Compat (derived) ═══════ */
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card: var(--surface);
+  --card-foreground: var(--fg);
+  --popover: var(--surface);
+  --popover-foreground: var(--fg);
+  --primary: var(--fg);
+  --primary-foreground: var(--bg);
+  --secondary: var(--border);
+  --secondary-foreground: var(--fg);
+  --muted: var(--border);
+  --muted-foreground: var(--text-secondary);
+  --accent-foreground: var(--bg);
+  --input: var(--border);
+  --ring: var(--accent);
   --destructive: oklch(0.577 0.245 27.325);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --destructive-foreground: oklch(0.985 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--fg);
   --sidebar-primary: oklch(0.205 0 0);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-accent: var(--border);
+  --sidebar-accent-foreground: var(--fg);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--accent);
 }
 
 .dark {
-  --bg: oklch(12% 0.008 250);
-  --surface: oklch(16% 0.01 250);
-  --fg: oklch(92% 0.005 250);
-  --muted: oklch(58% 0.01 250);
-  --border: oklch(25% 0.008 250);
-  --accent-dim: oklch(62% 0.22 255 / 0.15);
-  --nav-bg: oklch(16% 0.01 250 / 0.92);
-  --tick-bg: oklch(25% 0.008 250);
-  --ring-bg: oklch(25% 0.008 250);
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
+  /* ══════════════════════════════════
+     DARK THEME — mismos nombres, otros valores
+     ══════════════════════════════════ */
+
+  /* Surfaces */
+  --bg: oklch(16% 0.006 260);
+  --surface: oklch(16% 0.006 260);
+  --nav-bg: oklch(16% 0.006 260);
+  --border: oklch(24% 0.006 260);
+
+  /* Text */
+  --fg: oklch(90% 0.005 260);
+  --text-secondary: oklch(58% 0.008 260);
+  --text-tertiary: oklch(42% 0.005 260);
+
+  /* Accent */
+  --accent: oklch(65% 0.22 255);
+  --accent-dim: oklch(65% 0.22 255 / 0.16);
+
+  /* Component-specific */
+  --tick-bg: oklch(24% 0.006 260);
+  --ring-bg: oklch(24% 0.006 260);
+
+  /* Shadow colors */
+  --neu-light: oklch(28% 0.01 260 / 0.45);
+  --neu-dark: oklch(6% 0.01 260 / 0.5);
+
+  /* Accent shadows — override */
+  --neu-accent-dark: oklch(40% 0.2 255 / 0.5);
+  --neu-accent-raised: 3px 3px 8px var(--neu-accent-dark), -3px -3px 8px oklch(30% 0.15 255 / 0.3);
+  --neu-accent-pressed: inset 2px 2px 5px var(--neu-accent-dark), inset -2px -2px 5px oklch(40% 0.1 255 / 0.2);
+
+  /* Navigation — más sutil en dark */
+  --neu-nav-raised: 0 -4px 12px var(--neu-dark), 0 -1px 4px var(--neu-dark);
+
+  /* Shadcn dark — derivado */
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card: var(--surface);
+  --card-foreground: var(--fg);
+  --popover: var(--surface);
+  --popover-foreground: var(--fg);
+  --primary: var(--fg);
+  --primary-foreground: var(--bg);
+  --secondary: var(--border);
+  --secondary-foreground: var(--fg);
+  --muted: var(--border);
+  --muted-foreground: var(--text-secondary);
+  --accent-foreground: var(--fg);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--fg);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-accent: var(--border);
+  --sidebar-accent-foreground: var(--fg);
+  --sidebar-border: var(--border);
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* System preference dark (respects OS dark mode) */
+/* System preference dark */
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
-    --bg: oklch(12% 0.008 250);
-    --surface: oklch(16% 0.01 250);
-    --fg: oklch(92% 0.005 250);
-    --muted: oklch(58% 0.01 250);
-    --border: oklch(25% 0.008 250);
-    --accent-dim: oklch(62% 0.22 255 / 0.15);
-    --nav-bg: oklch(16% 0.01 250 / 0.92);
-    --tick-bg: oklch(25% 0.008 250);
-    --ring-bg: oklch(25% 0.008 250);
+    --bg: oklch(16% 0.006 260);
+    --surface: oklch(16% 0.006 260);
+    --fg: oklch(90% 0.005 260);
+    --text-secondary: oklch(58% 0.008 260);
+    --text-tertiary: oklch(42% 0.005 260);
+    --border: oklch(24% 0.006 260);
+    --accent: oklch(65% 0.22 255);
+    --accent-dim: oklch(65% 0.22 255 / 0.16);
+    --nav-bg: oklch(16% 0.006 260);
+    --tick-bg: oklch(24% 0.006 260);
+    --ring-bg: oklch(24% 0.006 260);
+    --neu-light: oklch(28% 0.01 260 / 0.45);
+    --neu-dark: oklch(6% 0.01 260 / 0.5);
   }
 }
 
-/* Base styles */
+/* ═══════════════════════════════════════
+   @theme — Tailwind tokens (compile-time only)
+   ═══════════════════════════════════════ */
+
+@theme {
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-fast: 150ms;
+  --motion-base: 250ms;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+}
+
+/* ═══════════════════════════════════════
+   NEUMORPHIC UTILITY CLASSES
+   ═══════════════════════════════════════ */
+
+@layer utilities {
+  .neu-raised-xs { box-shadow: var(--neu-raised-xs); }
+  .neu-raised-sm { box-shadow: var(--neu-raised-sm); }
+  .neu-raised-md { box-shadow: var(--neu-raised-md); }
+  .neu-raised-lg { box-shadow: var(--neu-raised-lg); }
+  .neu-raised-xl { box-shadow: var(--neu-raised-xl); }
+
+  .neu-pressed-xs { box-shadow: var(--neu-pressed-xs); }
+  .neu-pressed-sm { box-shadow: var(--neu-pressed-sm); }
+  .neu-pressed-md { box-shadow: var(--neu-pressed-md); }
+  .neu-pressed-lg { box-shadow: var(--neu-pressed-lg); }
+
+  .neu-surface {
+    background: var(--surface);
+    border: none;
+    box-shadow: var(--neu-raised-md);
+    transition: box-shadow var(--motion-fast) var(--ease-standard),
+                transform var(--motion-fast) var(--ease-standard);
+  }
+
+  .neu-surface:active {
+    box-shadow: var(--neu-pressed-md);
+    transform: scale(0.98);
+  }
+
+  .neu-pressed {
+    box-shadow: var(--neu-pressed-md);
+  }
+}
+
+/* ═══════════════════════════════════════
+   BASE STYLES
+   ═══════════════════════════════════════ */
+
 @layer base {
-  * { box-sizing: border-box; margin: 0; padding: 0;
-    @apply border-border outline-ring/50; }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    @apply border-border outline-ring/50;
+  }
 
   body {
     background: var(--bg);
@@ -136,7 +246,8 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    transition: background var(--motion-base) var(--ease-standard), color var(--motion-base) var(--ease-standard);
+    transition: background var(--motion-base) var(--ease-standard),
+                color var(--motion-base) var(--ease-standard);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     @apply bg-background text-foreground;
@@ -152,15 +263,15 @@
     cursor: pointer;
     border: none;
     border-radius: var(--radius-md);
-    transition: background var(--motion-fast) var(--ease-standard),
-                transform var(--motion-fast) var(--ease-standard),
-                box-shadow var(--motion-fast) var(--ease-standard);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     -webkit-tap-highlight-color: transparent;
     min-height: 44px;
+    transition: background var(--motion-fast) var(--ease-standard),
+                transform var(--motion-fast) var(--ease-standard),
+                box-shadow var(--motion-fast) var(--ease-standard);
   }
 
   button:focus-visible {
@@ -172,6 +283,53 @@
     transform: scale(0.97);
   }
 
+  [data-slot="card"] {
+    border: none !important;
+    box-shadow: var(--neu-raised-md);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+  }
+
+  input, select, textarea {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+    outline: none;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    outline: none;
+    transition: background var(--motion-fast) var(--ease-standard);
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--surface);
+    box-shadow: var(--neu-raised-xs);
+    cursor: pointer;
+    border: none;
+    transition: box-shadow var(--motion-fast) var(--ease-standard);
+  }
+
+  input[type="range"]::-webkit-slider-thumb:active {
+    box-shadow: var(--neu-pressed-xs);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--surface);
+    box-shadow: var(--neu-raised-xs);
+    cursor: pointer;
+    border: none;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
@@ -179,10 +337,15 @@
       transition-duration: 0.01ms !important;
     }
   }
+
   html {
     @apply font-sans;
   }
 }
+
+/* ═══════════════════════════════════════
+   @theme inline — Shadcn Bridge
+   ═══════════════════════════════════════ */
 
 @theme inline {
   --font-heading: var(--font-sans);
@@ -204,6 +367,7 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);

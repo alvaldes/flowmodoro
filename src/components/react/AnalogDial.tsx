@@ -18,14 +18,14 @@ export default function AnalogDial({ time, state, reducedMotion }: AnalogDialPro
   const ringProgress = state === "resting"
     ? 0
     : time < 3600
-      ? (time % 60) / 60           // seconds within the minute
-      : (time % 3600) / 3600;      // minutes within the hour
+      ? (time % 60) / 60
+      : (time % 3600) / 3600;
 
   const ticksFilled = state === "resting"
     ? 0
     : time < 3600
-      ? Math.floor((time % 3600) / 60)   // minutes within the hour
-      : Math.floor(time / 3600);          // total hours
+      ? Math.floor((time % 3600) / 60)
+      : Math.floor(time / 3600);
 
   const ticks = useMemo(() => {
     const arr: { x1: number; y1: number; x2: number; y2: number; filled: boolean }[] = [];
@@ -44,125 +44,168 @@ export default function AnalogDial({ time, state, reducedMotion }: AnalogDialPro
 
   const circumference = 2 * Math.PI * (OUTER_R - 26);
 
+  const isResting = state === "resting";
+
   return (
-    <svg
-      viewBox={`0 0 ${SIZE} ${SIZE}`}
-      style={{ width: SIZE, height: SIZE, display: "block" }}
-      role="img"
-      aria-label={`Timer showing ${formatTime(time)}`}
+    <div
+      style={{
+        position: "relative",
+        width: SIZE,
+        height: SIZE,
+        borderRadius: "50%",
+        background: "var(--surface)",
+        boxShadow: isResting
+          ? "var(--neu-raised-lg)"
+          : "var(--neu-pressed-lg)",
+        transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
+      }}
     >
-      {/* Tick marks */}
-      <g style={{ transition: "opacity 0.3s ease" }}>
-        {ticks.map((t, i) => (
-          <line
-            key={i}
-            x1={t.x1}
-            y1={t.y1}
-            x2={t.x2}
-            y2={t.y2}
-            stroke={t.filled ? "var(--accent)" : "var(--tick-bg)"}
-            strokeWidth={2}
-            strokeLinecap="round"
+      {/* Tick marks ring */}
+      <svg
+        viewBox={`0 0 ${SIZE} ${SIZE}`}
+        style={{
+          width: SIZE,
+          height: SIZE,
+          display: "block",
+          position: "absolute",
+          inset: 0,
+        }}
+        role="img"
+        aria-label={`Timer showing ${formatTime(time)}`}
+      >
+        <g>
+          {ticks.map((t, i) => (
+            <line
+              key={i}
+              x1={t.x1}
+              y1={t.y1}
+              x2={t.x2}
+              y2={t.y2}
+              stroke={t.filled ? "var(--accent)" : "var(--tick-bg)"}
+              strokeWidth={2.5}
+              strokeLinecap="round"
+              style={{
+                transition: reducedMotion ? "none" : "stroke 0.4s ease",
+              }}
+            />
+          ))}
+        </g>
+      </svg>
+
+      {/* Ring background & progress — separate layer */}
+      <svg
+        viewBox={`0 0 ${SIZE} ${SIZE}`}
+        style={{
+          width: SIZE,
+          height: SIZE,
+          display: "block",
+          position: "absolute",
+          inset: 0,
+        }}
+      >
+        {state !== "idle" && (
+          <>
+            <circle
+              cx={CX}
+              cy={CY}
+              r={OUTER_R - 26}
+              fill="none"
+              stroke="var(--ring-bg)"
+              strokeWidth={5}
+            />
+            <circle
+              cx={CX}
+              cy={CY}
+              r={OUTER_R - 26}
+              fill="none"
+              stroke="var(--accent)"
+              strokeWidth={5}
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={circumference * (1 - ringProgress)}
+              transform={`rotate(-90 ${CX} ${CY})`}
+              style={{
+                transition: reducedMotion ? "none" : "stroke-dashoffset 1s linear",
+              }}
+            />
+          </>
+        )}
+      </svg>
+
+      {/* Time display layer */}
+      <svg
+        viewBox={`0 0 ${SIZE} ${SIZE}`}
+        style={{
+          width: SIZE,
+          height: SIZE,
+          display: "block",
+          position: "absolute",
+          inset: 0,
+          zIndex: 1,
+        }}
+      >
+
+        {/* Unit labels */}
+        {state !== "idle" && (
+          <g
+            fill="var(--text-tertiary)"
             style={{
-              transition: reducedMotion ? "none" : "stroke 0.4s ease",
-              opacity: t.filled ? 1 : 0.5,
+              fontFamily: "var(--font-body, -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif)",
+              fontSize: "11px",
+              fontWeight: 500,
+              letterSpacing: "0.06em",
             }}
-          />
-        ))}
-      </g>
+          >
+            {time < 3600 ? (
+              <>
+                <text x={CX - 30} y={CY - 40} textAnchor="middle">MIN</text>
+                <text x={CX + 30} y={CY - 40} textAnchor="middle">SEC</text>
+              </>
+            ) : (
+              <>
+                <text x={CX - 48} y={CY - 40} textAnchor="middle">HR</text>
+                <text x={CX + 35} y={CY - 40} textAnchor="middle">MIN</text>
+              </>
+            )}
+          </g>
+        )}
 
-      {/* Ring background */}
-      {state !== "idle" && (
-        <circle
-          cx={CX}
-          cy={CY}
-          r={OUTER_R - 26}
-          fill="none"
-          stroke="var(--ring-bg)"
-          strokeWidth={4}
-        />
-      )}
-
-      {/* Hour ring (fills over 60min) */}
-      {state !== "idle" && (
-        <circle
-          cx={CX}
-          cy={CY}
-          r={OUTER_R - 26}
-          fill="none"
-          stroke="var(--accent)"
-          strokeWidth={4}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={circumference * (1 - ringProgress)}
-          transform={`rotate(-90 ${CX} ${CY})`}
+        {/* Time display — primary */}
+        <text
+          x={CX}
+          y={CY - 12}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fill="var(--fg)"
           style={{
-            transition: reducedMotion ? "none" : "stroke-dashoffset 1s linear",
-            opacity: 0.6,
+            fontFamily: "var(--font-display, -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif)",
+            fontSize: "54px",
+            fontWeight: 220,
+            fontVariantNumeric: "tabular-nums",
+            letterSpacing: "-0.03em",
           }}
-        />
-      )}
+        >
+          {formatTime(time)}
+        </text>
 
-      {/* Unit labels (superscript) */}
-      {state !== "idle" && (
-        <g
-          fill="var(--muted)"
+        {/* State label — secondary */}
+        <text
+          x={CX}
+          y={CY + 38}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fill="var(--text-secondary)"
           style={{
             fontFamily: "var(--font-body, -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif)",
             fontSize: "11px",
             fontWeight: 500,
-            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            letterSpacing: "0.18em",
           }}
         >
-          {time < 3600 ? (
-            <>
-              <text x={CX - 30} y={CY - 40} textAnchor="middle">MIN</text>
-              <text x={CX + 30} y={CY - 40} textAnchor="middle">SEC</text>
-            </>
-          ) : (
-            <>
-              <text x={CX - 48} y={CY - 40} textAnchor="middle">HR</text>
-              <text x={CX + 35} y={CY - 40} textAnchor="middle">MIN</text>
-            </>
-          )}
-        </g>
-      )}
-
-      {/* Time display */}
-      <text
-        x={CX}
-        y={CY - 12}
-        textAnchor="middle"
-        dominantBaseline="central"
-        fill="var(--fg)"
-        style={{
-          fontFamily: "var(--font-display, -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif)",
-          fontSize: "52px",
-          fontWeight: 250,
-          fontVariantNumeric: "tabular-nums",
-          letterSpacing: "-0.03em",
-        }}
-      >
-        {formatTime(time)}
-      </text>
-
-      {/* State label */}
-      <text
-        x={CX}
-        y={CY + 36}
-        textAnchor="middle"
-        dominantBaseline="central"
-        fill="var(--muted)"
-        style={{
-          fontFamily: "var(--font-body, -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif)",
-          fontSize: "12px",
-          fontWeight: 500,
-          textTransform: "uppercase",
-          letterSpacing: "0.15em",
-        }}
-      >
-        {state === "idle" ? "READY" : state === "focusing" ? "FLOW" : "REST"}
-      </text>
-    </svg>
+          {state === "idle" ? "READY" : state === "focusing" ? "FLOW" : "REST"}
+        </text>
+      </svg>
+    </div>
   );
 }

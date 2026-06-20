@@ -30,6 +30,7 @@ export default function SettingsSection() {
           fontWeight: 600,
           marginBottom: "16px",
           letterSpacing: "-0.01em",
+          color: "var(--fg)",
         }}
       >
         Rest Ratio
@@ -38,12 +39,11 @@ export default function SettingsSection() {
       <div
         style={{
           background: "var(--surface)",
-          border: "1px solid var(--border)",
-          borderRadius: "var(--radius-lg, 16px)",
+          borderRadius: "var(--radius-lg, 22px)",
           padding: "20px",
-          marginBottom: "24px",
-          transition:
-            "background var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
+          marginBottom: "28px",
+          boxShadow: "var(--neu-raised-md)",
+          transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
         }}
       >
         <div
@@ -53,10 +53,10 @@ export default function SettingsSection() {
             marginBottom: "12px",
           }}
         >
-          <span style={{ fontSize: "13px", color: "var(--muted)" }}>
+          <span style={{ fontSize: "13px", color: "var(--text-tertiary)" }}>
             Focus
           </span>
-          <span style={{ fontSize: "13px", color: "var(--muted)" }}>
+          <span style={{ fontSize: "13px", color: "var(--text-tertiary)" }}>
             Rest
           </span>
         </div>
@@ -73,6 +73,7 @@ export default function SettingsSection() {
               fontWeight: 500,
               minWidth: "50px",
               textAlign: "center",
+              color: "var(--fg)",
             }}
           >
             {Math.round(1 / restRatio)} min
@@ -86,15 +87,9 @@ export default function SettingsSection() {
             onChange={(e) => setRestRatio(parseFloat(e.target.value))}
             aria-label="Rest ratio: one minute rest per how many minutes of focus"
             style={{
-              WebkitAppearance: "none",
-              appearance: "none",
               width: "100%",
-              height: "6px",
-              borderRadius: "3px",
-              background: "var(--border)",
-              outline: "none",
-              transition:
-                "background var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
+              background: "var(--tick-bg)",
+              boxShadow: "inset 0 1px 3px var(--neu-dark)",
             }}
           />
           <span
@@ -103,6 +98,7 @@ export default function SettingsSection() {
               fontWeight: 500,
               minWidth: "50px",
               textAlign: "center",
+              color: "var(--fg)",
             }}
           >
             {Math.round(restRatio * 100)}%
@@ -111,7 +107,7 @@ export default function SettingsSection() {
         <p
           style={{
             fontSize: "12px",
-            color: "var(--muted)",
+            color: "var(--text-tertiary)",
             marginTop: "12px",
             textAlign: "center",
           }}
@@ -128,6 +124,7 @@ export default function SettingsSection() {
           fontWeight: 600,
           marginBottom: "16px",
           letterSpacing: "-0.01em",
+          color: "var(--fg)",
         }}
       >
         Appearance
@@ -136,21 +133,20 @@ export default function SettingsSection() {
       <div
         style={{
           background: "var(--surface)",
-          border: "1px solid var(--border)",
-          borderRadius: "var(--radius-lg, 16px)",
+          borderRadius: "var(--radius-lg, 22px)",
           padding: "20px",
-          marginBottom: "24px",
+          marginBottom: "28px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          transition:
-            "background var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
+          boxShadow: "var(--neu-raised-md)",
+          transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
         }}
       >
         <div>
-          <div style={{ fontWeight: 500, fontSize: "15px" }}>Dark Mode</div>
+          <div style={{ fontWeight: 500, fontSize: "15px", color: "var(--fg)" }}>Dark Mode</div>
           <div
-            style={{ fontSize: "12px", color: "var(--muted)", marginTop: "2px" }}
+            style={{ fontSize: "12px", color: "var(--text-tertiary)", marginTop: "2px" }}
           >
             Switch to dark theme
           </div>
@@ -159,20 +155,25 @@ export default function SettingsSection() {
       </div>
 
       {/* Alarm Sound */}
-      <h3 style={{ fontSize: "15px", fontWeight: 600, marginBottom: "16px", letterSpacing: "-0.01em" }}>
+      <h3 style={{ fontSize: "15px", fontWeight: 600, marginBottom: "16px", letterSpacing: "-0.01em", color: "var(--fg)" }}>
         Alarm
       </h3>
 
       <div style={{
-        background: "var(--surface)", border: "1px solid var(--border)",
-        borderRadius: "var(--radius-lg, 16px)", padding: "20px",
-        marginBottom: "24px", display: "flex", flexDirection: "column", gap: "16px",
-        transition: "background var(--motion-base, 250ms) var(--ease-standard)"
+        background: "var(--surface)",
+        borderRadius: "var(--radius-lg, 22px)",
+        padding: "20px",
+        marginBottom: "28px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        boxShadow: "var(--neu-raised-md)",
+        transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard)",
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
-            <div style={{ fontWeight: 500, fontSize: "15px" }}>Sound</div>
-            <div style={{ fontSize: "12px", color: "var(--muted)", marginTop: "2px" }}>
+            <div style={{ fontWeight: 500, fontSize: "15px", color: "var(--fg)" }}>Sound</div>
+            <div style={{ fontSize: "12px", color: "var(--text-tertiary)", marginTop: "2px" }}>
               Alarm when session ends
             </div>
           </div>
@@ -182,9 +183,14 @@ export default function SettingsSection() {
               onChange={(e) => setAlarmSound(e.target.value as AlarmSoundId)}
               aria-label="Alarm sound"
               style={{
-                background: "var(--bg)", border: "1px solid var(--border)",
-                borderRadius: "var(--radius-sm, 8px)", padding: "8px 12px",
-                fontSize: "13px", color: "var(--fg)", cursor: "pointer",
+                background: "var(--surface)",
+                border: "none",
+                borderRadius: "var(--radius-sm, 10px)",
+                padding: "8px 12px",
+                fontSize: "13px",
+                color: "var(--fg)",
+                cursor: "pointer",
+                boxShadow: "var(--neu-pressed-xs)",
               }}
             >
               {ALARM_SOUNDS.map((s) => (
@@ -195,10 +201,17 @@ export default function SettingsSection() {
               onClick={() => preview(alarmSound)}
               aria-label="Preview alarm sound"
               style={{
-                background: "var(--accent-dim)", color: "var(--accent)",
-                border: "none", borderRadius: "var(--radius-sm, 8px)",
-                padding: "8px 12px", fontSize: "12px", fontWeight: 600,
-                cursor: "pointer", whiteSpace: "nowrap",
+                background: "var(--accent-dim)",
+                color: "var(--accent)",
+                border: "none",
+                borderRadius: "var(--radius-sm, 10px)",
+                padding: "8px 12px",
+                fontSize: "12px",
+                fontWeight: 600,
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                minHeight: "auto",
+                boxShadow: "var(--neu-raised-xs)",
               }}
             >
               Preview
@@ -207,7 +220,7 @@ export default function SettingsSection() {
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontSize: "13px", color: "var(--muted)" }}>Volume</span>
+          <span style={{ fontSize: "13px", color: "var(--text-tertiary)" }}>Volume</span>
           <input
             type="range"
             min="0"
@@ -216,29 +229,37 @@ export default function SettingsSection() {
             value={volume}
             onChange={(e) => setVolume(parseFloat(e.target.value))}
             aria-label="Alarm volume"
-            style={{ width: "60%" }}
+            style={{
+              width: "60%",
+              background: "var(--tick-bg)",
+              boxShadow: "inset 0 1px 3px var(--neu-dark)",
+            }}
           />
-          <span style={{ fontSize: "13px", fontWeight: 500, minWidth: "32px", textAlign: "right" }}>
+          <span style={{ fontSize: "13px", fontWeight: 500, minWidth: "32px", textAlign: "right", color: "var(--fg)" }}>
             {Math.round(volume * 100)}%
           </span>
         </div>
       </div>
 
       {/* Notifications */}
-      <h3 style={{ fontSize: "15px", fontWeight: 600, marginBottom: "16px", letterSpacing: "-0.01em" }}>
+      <h3 style={{ fontSize: "15px", fontWeight: 600, marginBottom: "16px", letterSpacing: "-0.01em", color: "var(--fg)" }}>
         Notifications
       </h3>
 
       <div style={{
-        background: "var(--surface)", border: "1px solid var(--border)",
-        borderRadius: "var(--radius-lg, 16px)", padding: "20px",
-        marginBottom: "24px", display: "flex",
-        justifyContent: "space-between", alignItems: "center",
-        transition: "background var(--motion-base, 250ms) var(--ease-standard)"
+        background: "var(--surface)",
+        borderRadius: "var(--radius-lg, 22px)",
+        padding: "20px",
+        marginBottom: "28px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        boxShadow: "var(--neu-raised-md)",
+        transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard)",
       }}>
         <div>
-          <div style={{ fontWeight: 500, fontSize: "15px" }}>Browser Notifications</div>
-          <div style={{ fontSize: "12px", color: "var(--muted)", marginTop: "2px" }}>
+          <div style={{ fontWeight: 500, fontSize: "15px", color: "var(--fg)" }}>Browser Notifications</div>
+          <div style={{ fontSize: "12px", color: "var(--text-tertiary)", marginTop: "2px" }}>
             Show notifications when focus ends
           </div>
         </div>
@@ -249,20 +270,19 @@ export default function SettingsSection() {
       <div
         style={{
           background: "var(--surface)",
-          border: "1px solid var(--border)",
-          borderRadius: "var(--radius-lg, 16px)",
+          borderRadius: "var(--radius-lg, 22px)",
           padding: "20px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          transition:
-            "background var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
+          boxShadow: "var(--neu-raised-md)",
+          transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
         }}
       >
         <div>
-          <div style={{ fontWeight: 500, fontSize: "15px" }}>Sessions</div>
+          <div style={{ fontWeight: 500, fontSize: "15px", color: "var(--fg)" }}>Sessions</div>
           <div
-            style={{ fontSize: "12px", color: "var(--muted)", marginTop: "2px" }}
+            style={{ fontSize: "12px", color: "var(--text-tertiary)", marginTop: "2px" }}
           >
             All data stored locally
           </div>
@@ -270,7 +290,7 @@ export default function SettingsSection() {
         <div
           style={{
             fontSize: "13px",
-            color: "var(--muted)",
+            color: "var(--text-secondary)",
             fontWeight: 500,
           }}
         >
