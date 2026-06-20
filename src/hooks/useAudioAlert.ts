@@ -31,6 +31,9 @@ export function useAudioAlert(): UseAudioAlertReturn {
   }, []);
 
   const play = useCallback(() => {
+    // Don't play sound if tab is hidden (user can't hear it)
+    if (document.hidden) return;
+
     const soundId = currentSoundRef.current;
     const url = getSoundUrl(soundId);
 

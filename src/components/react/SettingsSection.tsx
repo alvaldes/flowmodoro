@@ -205,20 +205,38 @@ export default function SettingsSection() {
               Alarm when session ends
             </div>
           </div>
-          <select
-            value={alarmSound}
-            onChange={(e) => setAlarmSound(e.target.value as AlarmSoundId)}
-            aria-label="Alarm sound"
-            style={{
-              background: "var(--bg)", border: "1px solid var(--border)",
-              borderRadius: "var(--radius-sm, 8px)", padding: "8px 12px",
-              fontSize: "13px", color: "var(--fg)", cursor: "pointer",
-            }}
-          >
-            {ALARM_SOUNDS.map((s) => (
-              <option key={s.id} value={s.id}>{s.label}</option>
-            ))}
-          </select>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <select
+              value={alarmSound}
+              onChange={(e) => setAlarmSound(e.target.value as AlarmSoundId)}
+              aria-label="Alarm sound"
+              style={{
+                background: "var(--bg)", border: "1px solid var(--border)",
+                borderRadius: "var(--radius-sm, 8px)", padding: "8px 12px",
+                fontSize: "13px", color: "var(--fg)", cursor: "pointer",
+              }}
+            >
+              {ALARM_SOUNDS.map((s) => (
+                <option key={s.id} value={s.id}>{s.label}</option>
+              ))}
+            </select>
+            <button
+              onClick={() => {
+                const audio = new Audio(ALARM_SOUNDS.find(s => s.id === alarmSound)?.file ?? ALARM_SOUNDS[0].file);
+                audio.volume = volume;
+                audio.play().catch(() => {});
+              }}
+              aria-label="Preview alarm sound"
+              style={{
+                background: "var(--accent-dim)", color: "var(--accent)",
+                border: "none", borderRadius: "var(--radius-sm, 8px)",
+                padding: "8px 12px", fontSize: "12px", fontWeight: 600,
+                cursor: "pointer", whiteSpace: "nowrap",
+              }}
+            >
+              Preview
+            </button>
+          </div>
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
