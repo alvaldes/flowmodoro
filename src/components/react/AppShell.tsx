@@ -9,7 +9,6 @@ import { useNotification } from "@/hooks/useNotification";
 import { usePreWarmAudio } from "@/hooks/usePreWarmAudio";
 import { formatDuration } from "@/lib/format";
 import type { AppView } from "@/lib/constants";
-import type { Session } from "@/stores/types";
 import Onboarding from "./Onboarding";
 import TimerSection from "./TimerSection";
 import StatsSection from "./StatsSection";
@@ -40,15 +39,15 @@ export default function AppShell() {
 
   // Handle session completion side effects
   const handleSessionEnd = useCallback(
-    (session: Session) => {
+    (focusDuration: number) => {
       playAlarm();
       if (notificationsEnabled) {
         showNotification("Flow Session Complete!", {
-          body: `You focused for ${formatDuration(session.duration)}`,
+          body: `You focused for ${formatDuration(focusDuration)}`,
         });
       }
     },
-    [playAlarm, showNotification, notificationsEnabled]
+    [playAlarm, showNotification, notificationsEnabled],
   );
 
   // Timer engine
@@ -87,14 +86,6 @@ export default function AppShell() {
     localStorage.setItem("flowmodoro-onboarding", "true");
   };
 
-  const handleNameSession = (name: string, tags: string[]) => {
-    const sessions = useSessionsStore.getState().sessions;
-    const last = sessions[sessions.length - 1];
-    if (last) {
-      useSessionsStore.getState().updateSession(last.timestamp, { name, tags });
-    }
-  };
-
   // --- Onboarding ---
   if (!hasSeenOnboarding) {
     return (
@@ -114,7 +105,10 @@ export default function AppShell() {
         }}
       >
         <header style={{ padding: "20px 0", marginBottom: "24px" }}>
-          <h1 style={{ fontSize: "26px" }}>Flowmodoro</h1>
+          <h1 style={{ fontSize: "26px", display: "flex", alignItems: "center", gap: "10px" }}>
+            <img src="/favicon.svg" alt="" style={{ width: 28, height: 28 }} />
+            Flowmodoro
+          </h1>
         </header>
         <Onboarding onFinish={finishOnboarding} />
       </div>
@@ -152,10 +146,14 @@ export default function AppShell() {
             fontSize: "22px",
             cursor: "pointer",
             userSelect: "none",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
           }}
           onClick={() => setView("timer")}
         >
-          Flow
+          <img src="/favicon.svg" alt="" style={{ width: 24, height: 24 }} />
+          Flowmodoro
         </h1>
       </header>
 
@@ -169,8 +167,6 @@ export default function AppShell() {
                 onStart={timer.start}
                 onBreak={timer.takeBreak}
                 onEnd={timer.end}
-                onDismissCompleted={timer.dismissCompleted}
-                onNameSession={handleNameSession}
               />
             </motion.div>
           )}

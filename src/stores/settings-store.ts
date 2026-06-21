@@ -18,6 +18,7 @@ export const useSettingsStore = create<SettingsStore>()(
       alarmSound: "classic-alarm" as AlarmSoundId,
       volume: 0.5,
       notificationsEnabled: false,
+      autoFocusAfterBreak: false,
 
       setRestRatio: (ratio: number) =>
         set({
@@ -33,6 +34,9 @@ export const useSettingsStore = create<SettingsStore>()(
 
       toggleNotifications: () =>
         set((state) => ({ notificationsEnabled: !state.notificationsEnabled })),
+
+      toggleAutoFocus: () =>
+        set((state) => ({ autoFocusAfterBreak: !state.autoFocusAfterBreak })),
     }),
     {
       name: STORAGE_KEYS.SETTINGS,
@@ -42,6 +46,7 @@ export const useSettingsStore = create<SettingsStore>()(
         alarmSound: state.alarmSound,
         volume: state.volume,
         notificationsEnabled: state.notificationsEnabled,
+        autoFocusAfterBreak: state.autoFocusAfterBreak,
       }),
       skipHydration: true,
     }

@@ -12,11 +12,13 @@ export default function SettingsSection() {
     alarmSound,
     volume,
     notificationsEnabled,
+    autoFocusAfterBreak,
     setRestRatio,
     toggleDarkMode,
     setAlarmSound,
     setVolume,
     toggleNotifications,
+    toggleAutoFocus,
   } = useSettingsStore();
   const sessionCount = useSessionsStore((s) => s.sessions.length);
   const { preview } = useAudioAlert();
@@ -239,6 +241,31 @@ export default function SettingsSection() {
             {Math.round(volume * 100)}%
           </span>
         </div>
+      </div>
+
+      {/* Behavior */}
+      <h3 style={{ fontSize: "15px", fontWeight: 600, marginBottom: "16px", letterSpacing: "-0.01em", color: "var(--fg)" }}>
+        Behavior
+      </h3>
+
+      <div style={{
+        background: "var(--surface)",
+        borderRadius: "var(--radius-lg, 22px)",
+        padding: "20px",
+        marginBottom: "28px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        boxShadow: "var(--neu-raised-md)",
+        transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard)",
+      }}>
+        <div>
+          <div style={{ fontWeight: 500, fontSize: "15px", color: "var(--fg)" }}>Auto-Focus After Break</div>
+          <div style={{ fontSize: "12px", color: "var(--text-tertiary)", marginTop: "2px" }}>
+            Automatically start a new flow session when break ends
+          </div>
+        </div>
+        <Switch checked={autoFocusAfterBreak} onCheckedChange={toggleAutoFocus} aria-label="Toggle auto-focus after break" />
       </div>
 
       {/* Notifications */}

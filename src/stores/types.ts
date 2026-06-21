@@ -11,12 +11,21 @@ export type AlarmSoundId =
   | "uplifting-bells"
   | "urgent-tone";
 
-export interface Session {
+export interface SessionEntry {
+  type: "focus" | "break";
   duration: number;
+  startedAt: number;
+}
+
+export interface Session {
+  id: string;
   timestamp: number;
+  entries: SessionEntry[];
   name?: string;
   tags?: string[];
 }
+
+export type SessionNotification = { focusDuration: number; timestamp: number };
 
 export interface TimerState {
   appState: AppState;
@@ -33,7 +42,7 @@ export interface TimerActions {
   completeRest: () => void;
   dismissCompleted: () => void;
   takeBreak: (restRatio: number, focusTime: number) => void;
-  end: (focusTime: number) => Session | null;
+  end: (focusTime: number) => { duration: number; timestamp: number } | null;
 }
 
 export interface SettingsState {
@@ -42,6 +51,7 @@ export interface SettingsState {
   alarmSound: AlarmSoundId;
   volume: number;
   notificationsEnabled: boolean;
+  autoFocusAfterBreak: boolean;
 }
 
 export interface SettingsActions {
@@ -50,6 +60,7 @@ export interface SettingsActions {
   setAlarmSound: (sound: AlarmSoundId) => void;
   setVolume: (volume: number) => void;
   toggleNotifications: () => void;
+  toggleAutoFocus: () => void;
 }
 
 export interface SessionsState {
@@ -58,6 +69,7 @@ export interface SessionsState {
 
 export interface SessionsActions {
   addSession: (session: Session) => void;
-  updateSession: (timestamp: number, patch: Partial<Pick<Session, "name" | "tags">>) => void;
+  addEntryToSession: (sessionId: string, entry: SessionEntry) => void;
+  updateSession: (id: string, patch: Partial<Pick<Session, "name" | "tags">>) => void;
   clearSessions: () => void;
 }

@@ -1,21 +1,45 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSessionsStore } from "@/stores/sessions-store";
 import { formatDuration } from "@/lib/format";
 import { DAY_LABELS } from "@/lib/constants";
 
+function getFocusDuration(entries: { type: string; duration: number }[] | undefined): number {
+  if (!entries) return 0;
+  return entries
+    .filter((e) => e.type === "focus")
+    .reduce((sum, e) => sum + e.duration, 0);
+}
+
 export default function StatsSection() {
   const sessions = useSessionsStore((s) => s.sessions);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
-  const totalFocus = sessions.reduce((acc, s) => acc + s.duration, 0);
+  const toggleExpanded = (id: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const totalFocus = useMemo(
+    () => sessions.reduce((acc, s) => acc + getFocusDuration(s.entries), 0),
+    [sessions]
+  );
   const sessionCount = sessions.length;
 
-  const todayFocus = sessions
-    .filter((s) => {
-      const d = new Date(s.timestamp);
-      const now = new Date();
-      return d.toDateString() === now.toDateString();
-    })
-    .reduce((acc, s) => acc + s.duration, 0);
+  const todayFocus = useMemo(
+    () =>
+      sessions
+        .filter((s) => {
+          const d = new Date(s.timestamp);
+          const now = new Date();
+          return d.toDateString() === now.toDateString();
+        })
+        .reduce((acc, s) => acc + getFocusDuration(s.entries), 0),
+    [sessions]
+  );
 
   const weekData = useMemo(() => {
     const days: number[] = [];
@@ -25,7 +49,7 @@ export default function StatsSection() {
       const dStr = d.toDateString();
       const total = sessions
         .filter((s) => new Date(s.timestamp).toDateString() === dStr)
-        .reduce((acc, s) => acc + s.duration, 0);
+        .reduce((acc, s) => acc + getFocusDuration(s.entries), 0);
       days.push(total);
     }
     return days;
@@ -243,65 +267,112 @@ export default function StatsSection() {
         </p>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          {[...sessions].reverse().map((s, i) => (
-            <div
-              key={i}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                padding: "14px 18px",
-                background: "var(--surface)",
-                borderRadius: "var(--radius-md, 16px)",
-                fontSize: "14px",
-                boxShadow: "var(--neu-raised-sm)",
-                transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                  <span style={{ color: "var(--fg)", fontWeight: 500 }}>
-                    {new Date(s.timestamp).toLocaleDateString([], {
-                      weekday: "short", month: "short", day: "numeric",
-                    })}
-                  </span>
-                  <span style={{ color: "var(--text-tertiary)", marginLeft: "8px" }}>
-                    {new Date(s.timestamp).toLocaleTimeString([], {
-                      hour: "2-digit", minute: "2-digit",
-                    })}
+          {[...sessions].reverse().map((s) => {
+            const entries = s.entries ?? [];
+            const focusDur = getFocusDuration(entries);
+            const breakEntry = entries.find((e) => e.type === "break");
+            const isOpen = expanded.has(s.id);
+            return (
+              <div
+                key={s.id ?? s.timestamp}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  padding: "14px 18px",
+                  background: "var(--surface)",
+                  borderRadius: "var(--radius-md, 16px)",
+                  fontSize: "14px",
+                  boxShadow: "var(--neu-raised-sm)",
+                  cursor: "pointer",
+                  transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
+                }}
+                onClick={() => toggleExpanded(s.id)}
+                role="button"
+                tabIndex={0}
+                aria-expanded={isOpen}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") toggleExpanded(s.id); }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <span style={{ color: "var(--fg)", fontWeight: 500 }}>
+                      {new Date(s.timestamp).toLocaleDateString([], {
+                        weekday: "short", month: "short", day: "numeric",
+                      })}
+                    </span>
+                    <span style={{ color: "var(--text-tertiary)", marginLeft: "8px" }}>
+                      {new Date(s.timestamp).toLocaleTimeString([], {
+                        hour: "2-digit", minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                  <span style={{ fontWeight: 600, color: "var(--accent)" }}>
+                    {formatDuration(focusDur)}
                   </span>
                 </div>
-                <span style={{ fontWeight: 600, color: "var(--accent)" }}>
-                  {formatDuration(s.duration)}
-                </span>
+
+                {(s.name || (s.tags && s.tags.length > 0)) && (
+                  <div style={{ marginTop: "8px", display: "flex", flexWrap: "wrap", gap: "6px", alignItems: "center" }}>
+                    {s.name && (
+                      <span style={{ fontSize: "12px", fontWeight: 500, color: "var(--fg)" }}>
+                        {s.name}
+                      </span>
+                    )}
+                    {s.tags?.map((tag, ti) => (
+                      <span
+                        key={ti}
+                        style={{
+                          fontSize: "10px",
+                          fontWeight: 500,
+                          background: "var(--accent-dim)",
+                          color: "var(--accent)",
+                          padding: "2px 8px",
+                          borderRadius: "6px",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.04em",
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Expandable details: focus + break breakdown */}
+                {isOpen && (
+                  <div
+                    style={{
+                      marginTop: "12px",
+                      paddingTop: "12px",
+                      borderTop: "1px solid var(--tick-bg)",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "8px",
+                      fontSize: "13px",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ color: "var(--text-secondary)", fontWeight: 500, display: "flex", alignItems: "center", gap: "6px" }}>
+                        <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--accent)", display: "inline-block" }} />
+                        Focus
+                      </span>
+                      <span style={{ fontWeight: 500, color: "var(--fg)" }}>
+                        {formatDuration(focusDur)}
+                      </span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ color: "var(--text-secondary)", fontWeight: 500, display: "flex", alignItems: "center", gap: "6px" }}>
+                        <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--text-tertiary)", display: "inline-block" }} />
+                        Break
+                      </span>
+                      <span style={{ fontWeight: 500, color: "var(--fg)" }}>
+                        {breakEntry ? formatDuration(breakEntry.duration) : "—"}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
-              {(s.name || (s.tags && s.tags.length > 0)) && (
-                <div style={{ marginTop: "8px", display: "flex", flexWrap: "wrap", gap: "6px", alignItems: "center" }}>
-                  {s.name && (
-                    <span style={{ fontSize: "12px", fontWeight: 500, color: "var(--fg)" }}>
-                      {s.name}
-                    </span>
-                  )}
-                  {s.tags?.map((tag, ti) => (
-                    <span
-                      key={ti}
-                      style={{
-                        fontSize: "10px",
-                        fontWeight: 500,
-                        background: "var(--accent-dim)",
-                        color: "var(--accent)",
-                        padding: "2px 8px",
-                        borderRadius: "6px",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.04em",
-                      }}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

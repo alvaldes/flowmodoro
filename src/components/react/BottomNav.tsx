@@ -13,8 +13,8 @@ interface BottomNavProps {
 }
 
 const items: NavItemType[] = [
-  { id: "timer", label: "Timer", Icon: Clock },
   { id: "stats", label: "Stats", Icon: BarChart3 },
+  { id: "timer", label: "Timer", Icon: Clock },
   { id: "settings", label: "Settings", Icon: Settings },
 ];
 

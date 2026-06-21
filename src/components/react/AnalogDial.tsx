@@ -221,7 +221,7 @@ export default function AnalogDial({ time, state, reducedMotion }: AnalogDialPro
             letterSpacing: "0.18em",
           }}
         >
-          {state === "idle" ? "READY" : state === "focusing" ? "FLOW" : "REST"}
+          {state === "idle" ? "Ready" : state === "focusing" ? "Focus" : "Break"}
         </text>
       </svg>
     </div>

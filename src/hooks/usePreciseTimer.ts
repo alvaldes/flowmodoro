@@ -3,10 +3,10 @@ import { useTimerStore } from "@/stores/timer-store";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useSessionsStore } from "@/stores/sessions-store";
 import { TIMER } from "@/lib/constants";
-import type { Session } from "@/stores/types";
+import type { Session, SessionEntry } from "@/stores/types";
 
 interface UsePreciseTimerOptions {
-  onSessionEnd?: (session: Session) => void;
+  onSessionEnd?: (focusDuration: number) => void;
 }
 
 interface UsePreciseTimerReturn {
@@ -16,22 +16,40 @@ interface UsePreciseTimerReturn {
   takeBreak: () => void;
   end: () => void;
   dismissCompleted: () => void;
-  nameSession: (timestamp: number, name: string, tags: string[]) => void;
+  nameSession: (id: string, name: string, tags: string[]) => void;
 }
 
 export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePreciseTimerReturn {
   const { onSessionEnd } = options;
   const prevAppState = useRef<string | null>(null);
+  const currentSessionId = useRef<string | null>(null);
+  const breakTracker = useRef<{ startedAt: number; totalSeconds: number } | null>(null);
 
   const appState = useTimerStore((s) => s.appState);
   const time = useTimerStore((s) => s.time);
 
-  const start = useCallback(() => useTimerStore.getState().start(), []);
+  const start = useCallback(() => {
+    // If currently resting, save partial break entry before resuming focus
+    const { appState, time: remaining } = useTimerStore.getState();
+    if (appState === "resting" && currentSessionId.current && breakTracker.current) {
+      const breakTaken = Math.max(breakTracker.current.totalSeconds - remaining, 0);
+      const entry: SessionEntry = {
+        type: "break",
+        duration: breakTaken,
+        startedAt: breakTracker.current.startedAt,
+      };
+      useSessionsStore.getState().addEntryToSession(currentSessionId.current, entry);
+      currentSessionId.current = null;
+      breakTracker.current = null;
+    }
+    useTimerStore.getState().start();
+  }, []);
+
   const dismissCompleted = useCallback(() => useTimerStore.getState().dismissCompleted(), []);
 
   const nameSession = useCallback(
-    (timestamp: number, name: string, tags: string[]) => {
-      useSessionsStore.getState().updateSession(timestamp, { name, tags });
+    (id: string, name: string, tags: string[]) => {
+      useSessionsStore.getState().updateSession(id, { name, tags });
     },
     []
   );
@@ -40,19 +58,43 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
     const { time: focusTime } = useTimerStore.getState();
     const { restRatio } = useSettingsStore.getState();
     if (focusTime > 0) {
-      const session: Session = { duration: focusTime, timestamp: Date.now() };
+      const id = crypto.randomUUID();
+      const now = Date.now();
+      const focusEntry: SessionEntry = {
+        type: "focus",
+        duration: focusTime,
+        startedAt: now - focusTime * 1000,
+      };
+      const session: Session = {
+        id,
+        timestamp: now,
+        entries: [focusEntry],
+      };
       useSessionsStore.getState().addSession(session);
-      onSessionEnd?.(session);
+      currentSessionId.current = id;
+      onSessionEnd?.(focusTime);
     }
+    const restRatioVal = useSettingsStore.getState().restRatio;
+    const restDuration = Math.max(
+      Math.floor(focusTime * restRatioVal),
+      TIMER.MIN_REST_SECONDS
+    );
+    breakTracker.current = { startedAt: Date.now(), totalSeconds: restDuration };
     useTimerStore.getState().takeBreak(restRatio, focusTime);
   }, [onSessionEnd]);
 
   const end = useCallback(() => {
     const { time: focusTime } = useTimerStore.getState();
-    const session = useTimerStore.getState().end(focusTime);
-    if (session) {
+    const info = useTimerStore.getState().end(focusTime);
+    if (info) {
+      const id = crypto.randomUUID();
+      const session: Session = {
+        id,
+        timestamp: info.timestamp,
+        entries: [{ type: "focus", duration: info.duration, startedAt: info.timestamp - info.duration * 1000 }],
+      };
       useSessionsStore.getState().addSession(session);
-      onSessionEnd?.(session);
+      onSessionEnd?.(focusTime);
     }
   }, [onSessionEnd]);
 
@@ -83,6 +125,11 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
 
     const timeout = setTimeout(() => {
       useTimerStore.getState().dismissCompleted();
+
+      const { autoFocusAfterBreak } = useSettingsStore.getState();
+      if (autoFocusAfterBreak) {
+        useTimerStore.getState().start();
+      }
     }, TIMER.COMPLETED_DISPLAY_SECONDS * 1000);
 
     return () => clearTimeout(timeout);
@@ -108,6 +155,19 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
   // Track state transitions for side effects
   useEffect(() => {
     if (prevAppState.current !== null && prevAppState.current !== appState) {
+      // Break ended naturally (resting → completed): save break entry
+      if (prevAppState.current === "resting" && appState === "completed") {
+        if (currentSessionId.current && breakTracker.current) {
+          const entry: SessionEntry = {
+            type: "break",
+            duration: breakTracker.current.totalSeconds,
+            startedAt: breakTracker.current.startedAt,
+          };
+          useSessionsStore.getState().addEntryToSession(currentSessionId.current, entry);
+          currentSessionId.current = null;
+          breakTracker.current = null;
+        }
+      }
       prevAppState.current = appState;
     } else if (prevAppState.current === null) {
       prevAppState.current = appState;
