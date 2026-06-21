@@ -20,7 +20,17 @@ interface SoundRowProps {
   onStop: () => void;
 }
 
-function SoundRow({ label, description, soundId, value, onChange, previewingId, isPlaying, onPreview, onStop }: SoundRowProps) {
+function SoundRow({
+  label,
+  description,
+  soundId,
+  value,
+  onChange,
+  previewingId,
+  isPlaying,
+  onPreview,
+  onStop,
+}: SoundRowProps) {
   const isThisPlaying = previewingId === soundId && isPlaying;
 
   return (
@@ -32,9 +42,7 @@ function SoundRow({ label, description, soundId, value, onChange, previewingId, 
       }}
     >
       <div>
-        <div
-          style={{ fontWeight: 500, fontSize: "15px", color: "var(--fg)" }}
-        >
+        <div style={{ fontWeight: 500, fontSize: "15px", color: "var(--fg)" }}>
           {label}
         </div>
         <div
@@ -73,12 +81,16 @@ function SoundRow({ label, description, soundId, value, onChange, previewingId, 
         <PillButton
           active={isThisPlaying}
           icon={
-            isThisPlaying
-              ? <Square size={16} fill="currentColor" />
-              : <Play size={18} fill="currentColor" />
+            isThisPlaying ? (
+              <Square size={16} fill="currentColor" />
+            ) : (
+              <Play size={18} fill="currentColor" />
+            )
           }
           onClick={isThisPlaying ? onStop : () => onPreview(soundId, value)}
-          ariaLabel={isThisPlaying ? `Stop ${label} preview` : `Preview ${label} sound`}
+          ariaLabel={
+            isThisPlaying ? `Stop ${label} preview` : `Preview ${label} sound`
+          }
           size={34}
           style={{ background: "none", boxShadow: "none" }}
         />
@@ -129,7 +141,7 @@ export default function SettingsSection() {
 
   return (
     <div style={{ marginTop: "24px" }}>
-      {/* Rest Ratio */}
+      {/* Break Ratio */}
       <h3
         style={{
           fontSize: "15px",
@@ -139,7 +151,7 @@ export default function SettingsSection() {
           color: "var(--fg)",
         }}
       >
-        Rest Ratio
+        Break Ratio
       </h3>
 
       <div
@@ -164,7 +176,7 @@ export default function SettingsSection() {
             Focus
           </span>
           <span style={{ fontSize: "13px", color: "var(--text-tertiary)" }}>
-            Rest
+            Break
           </span>
         </div>
         <div

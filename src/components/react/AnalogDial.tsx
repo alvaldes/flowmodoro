@@ -15,7 +15,12 @@ const CY = SIZE / 2;
 const OUTER_R = 148;
 const TICK_COUNT = 60;
 
-export default function AnalogDial({ time, state, reducedMotion, initialRestTime }: AnalogDialProps) {
+export default function AnalogDial({
+  time,
+  state,
+  reducedMotion,
+  initialRestTime,
+}: AnalogDialProps) {
   // ---------------------------------------------------------------------------
   // FUTURE: to restore alternate ring/tick behavior for durations >=1h
   // (e.g. tick per hour and ring per minute), uncomment the block below
@@ -38,7 +43,13 @@ export default function AnalogDial({ time, state, reducedMotion, initialRestTime
   const ticksFilled = Math.floor((time % 3600) / 60);
 
   const ticks = useMemo(() => {
-    const arr: { x1: number; y1: number; x2: number; y2: number; filled: boolean }[] = [];
+    const arr: {
+      x1: number;
+      y1: number;
+      x2: number;
+      y2: number;
+      filled: boolean;
+    }[] = [];
     for (let i = 0; i < TICK_COUNT; i++) {
       const angle = (i / TICK_COUNT) * 360 - 90;
       const rad = (angle * Math.PI) / 180;
@@ -64,10 +75,9 @@ export default function AnalogDial({ time, state, reducedMotion, initialRestTime
         height: SIZE,
         borderRadius: "50%",
         background: "var(--surface)",
-        boxShadow: isResting
-          ? "var(--neu-raised-lg)"
-          : "var(--neu-pressed-lg)",
-        transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
+        boxShadow: isResting ? "var(--neu-raised-lg)" : "var(--neu-pressed-lg)",
+        transition:
+          "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
       }}
     >
       {/* Tick marks ring */}
@@ -135,7 +145,9 @@ export default function AnalogDial({ time, state, reducedMotion, initialRestTime
               strokeDashoffset={circumference * (1 - ringProgress)}
               transform={`rotate(-90 ${CX} ${CY})`}
               style={{
-                transition: reducedMotion ? "none" : "stroke-dashoffset 1s linear",
+                transition: reducedMotion
+                  ? "none"
+                  : "stroke-dashoffset 1s linear",
               }}
             />
           </>
@@ -154,13 +166,13 @@ export default function AnalogDial({ time, state, reducedMotion, initialRestTime
           zIndex: 1,
         }}
       >
-
         {/* Unit labels */}
         {state !== "idle" && (
           <g
             fill="var(--text-tertiary)"
             style={{
-              fontFamily: "var(--font-body, -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif)",
+              fontFamily:
+                "var(--font-body, -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif)",
               fontSize: "11px",
               fontWeight: 500,
               letterSpacing: "0.06em",
@@ -180,8 +192,12 @@ export default function AnalogDial({ time, state, reducedMotion, initialRestTime
                 </>
               )}
             */}
-            <text x={CX - 30} y={CY - 40} textAnchor="middle">MIN</text>
-            <text x={CX + 30} y={CY - 40} textAnchor="middle">SEC</text>
+            <text x={CX - 20} y={CY - 40} textAnchor="middle">
+              MIN
+            </text>
+            <text x={CX + 50} y={CY - 40} textAnchor="middle">
+              SEC
+            </text>
           </g>
         )}
 
@@ -193,7 +209,8 @@ export default function AnalogDial({ time, state, reducedMotion, initialRestTime
           dominantBaseline="central"
           fill="var(--fg)"
           style={{
-            fontFamily: "var(--font-display, -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif)",
+            fontFamily:
+              "var(--font-display, -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif)",
             fontSize: "54px",
             fontWeight: 220,
             fontVariantNumeric: "tabular-nums",
@@ -211,14 +228,19 @@ export default function AnalogDial({ time, state, reducedMotion, initialRestTime
           dominantBaseline="central"
           fill="var(--text-secondary)"
           style={{
-            fontFamily: "var(--font-body, -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif)",
+            fontFamily:
+              "var(--font-body, -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif)",
             fontSize: "11px",
             fontWeight: 500,
             textTransform: "uppercase",
             letterSpacing: "0.18em",
           }}
         >
-          {state === "idle" ? "Ready" : state === "focusing" ? "Focus" : "Break"}
+          {state === "idle"
+            ? "Ready"
+            : state === "focusing"
+              ? "Focus"
+              : "Break"}
         </text>
       </svg>
     </div>
