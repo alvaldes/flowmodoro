@@ -42,7 +42,10 @@ export const useSessionsStore = create<SessionsStore>()(
           ),
         })),
 
-      clearSessions: () => set({ sessions: [] }),
+      clearSessions: () => {
+        useSessionsStore.persist.clearStorage();
+        set({ sessions: [] });
+      },
     }),
     {
       name: STORAGE_KEYS.SESSIONS,

@@ -1,10 +1,22 @@
 import { useSettingsStore } from "@/stores/settings-store";
 import { useSessionsStore } from "@/stores/sessions-store";
+import { useTimerStore } from "@/stores/timer-store";
 import { useAudioAlert } from "@/hooks/useAudioAlert";
 import { ALARM_SOUNDS } from "@/lib/constants";
 import type { AlarmSoundId } from "@/stores/types";
 import { Switch } from "@/components/ui/switch";
-import { Play, Square } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Play, Square, Trash2 } from "lucide-react";
 import { PillButton } from "@/components/react/TimerSection";
 import { useState, useEffect } from "react";
 
@@ -132,6 +144,16 @@ export default function SettingsSection() {
   const handlePreview = (id: string, soundId: AlarmSoundId) => {
     setPreviewingId(id);
     preview(soundId);
+  };
+
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const clearAllData = () => {
+    useSessionsStore.getState().clearSessions();
+    useSettingsStore.getState().resetToDefaults();
+    useTimerStore.getState().resetToDefaults();
+    localStorage.removeItem("flowmodoro-onboarding");
+    setIsDeleteDialogOpen(false);
   };
 
   const handleStop = () => {
@@ -529,6 +551,90 @@ export default function SettingsSection() {
         >
           {sessionCount} total
         </div>
+      </div>
+
+      {/* Danger Zone */}
+      <h3
+        style={{
+          fontSize: "15px",
+          fontWeight: 600,
+          marginBottom: "16px",
+          marginTop: "28px",
+          letterSpacing: "-0.01em",
+          color: "var(--destructive)",
+        }}
+      >
+        Danger Zone
+      </h3>
+
+      <div
+        style={{
+          background: "var(--surface)",
+          borderRadius: "var(--radius-lg, 22px)",
+          padding: "20px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          boxShadow: "var(--neu-raised-md)",
+          border: "1px solid color-mix(in oklch, var(--destructive) 20%, transparent)",
+          transition:
+            "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
+        }}
+      >
+        <div>
+          <div
+            style={{ fontWeight: 500, fontSize: "15px", color: "var(--fg)" }}
+          >
+            Clear All Data
+          </div>
+          <div
+            style={{
+              fontSize: "12px",
+              color: "var(--text-tertiary)",
+              marginTop: "2px",
+            }}
+          >
+            Permanently delete all sessions, timer state, and settings
+          </div>
+        </div>
+
+        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <DialogTrigger
+            render={
+              <Button
+                variant="destructive"
+                size="sm"
+                className="gap-1.5 shrink-0"
+              >
+                <Trash2 size={14} />
+                Delete
+              </Button>
+            }
+          />
+          <DialogContent role="alertdialog">
+            <DialogHeader>
+              <DialogTitle>Delete all data?</DialogTitle>
+              <DialogDescription>
+                This will permanently delete all your sessions, timer progress,
+                and reset every setting to its default. This action{" "}
+                <strong>cannot be undone</strong>.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <DialogClose
+                render={<Button variant="outline">Cancel</Button>}
+              />
+              <Button
+                variant="destructive"
+                className="gap-1.5"
+                onClick={clearAllData}
+              >
+                <Trash2 size={14} />
+                Delete Everything
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

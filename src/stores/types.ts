@@ -49,6 +49,7 @@ export interface TimerActions {
   end: (focusTime: number) => { duration: number; timestamp: number } | null;
   setSessionMeta: (id: string | null, startedAt: number) => void;
   setCurrentSessionId: (id: string | null) => void;
+  resetToDefaults: () => void;
 }
 
 export interface SettingsState {
@@ -71,6 +72,7 @@ export interface SettingsActions {
   setVolume: (volume: number) => void;
   toggleNotifications: () => void;
   toggleAutoFocus: () => void;
+  resetToDefaults: () => void;
 }
 
 export interface SessionsState {

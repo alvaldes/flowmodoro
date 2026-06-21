@@ -41,6 +41,20 @@ export const useSettingsStore = create<SettingsStore>()(
 
       toggleAutoFocus: () =>
         set((state) => ({ autoFocusAfterBreak: !state.autoFocusAfterBreak })),
+
+      resetToDefaults: () => {
+        useSettingsStore.persist.clearStorage();
+        set({
+          restRatio: TIMER.DEFAULT_REST_RATIO,
+          darkMode: getSystemDarkMode(),
+          focusAlarmSound: "notification-bell" as AlarmSoundId,
+          breakAlarmSound: "uplifting-bells" as AlarmSoundId,
+          endAlarmSound: "achievement-bell" as AlarmSoundId,
+          volume: 0.5,
+          notificationsEnabled: false,
+          autoFocusAfterBreak: true,
+        });
+      },
     }),
     {
       name: STORAGE_KEYS.SETTINGS,

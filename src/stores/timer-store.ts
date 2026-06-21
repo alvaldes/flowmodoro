@@ -131,6 +131,19 @@ export const useTimerStore = create<TimerStore>()(
 
       setCurrentSessionId: (id: string | null) =>
         set({ currentSessionId: id }),
+
+      resetToDefaults: () => {
+        useTimerStore.persist.clearStorage();
+        set({
+          appState: "idle" as AppState,
+          time: 0,
+          lastTickTimestamp: Date.now(),
+          hiddenAt: 0,
+          initialRestTime: 0,
+          currentSessionId: null,
+          sessionStartedAt: 0,
+        });
+      },
     }),
     {
       name: STORAGE_KEYS.TIMER,
