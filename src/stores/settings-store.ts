@@ -18,7 +18,7 @@ export const useSettingsStore = create<SettingsStore>()(
       alarmSound: "classic-alarm" as AlarmSoundId,
       volume: 0.5,
       notificationsEnabled: false,
-      autoFocusAfterBreak: false,
+      autoFocusAfterBreak: true,
 
       setRestRatio: (ratio: number) =>
         set({
