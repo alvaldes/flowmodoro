@@ -15,18 +15,21 @@ interface TimerSectionProps {
 // ---------------------------------------------------------------------------
 // Pill button sub-component
 // ---------------------------------------------------------------------------
-interface PillButtonProps {
-  label: string;
+export interface PillButtonProps {
+  label?: string;
   active: boolean;
   icon: React.ReactNode;
   onClick: () => void;
   ariaLabel: string;
+  size?: number;
   style?: React.CSSProperties;
 }
 
-const PILL_HEIGHT = 48;
+export const PILL_HEIGHT = 48;
 
-function PillButton({ label, active, icon, onClick, ariaLabel, style }: PillButtonProps) {
+export function PillButton({ label, active, icon, onClick, ariaLabel, size = PILL_HEIGHT, style }: PillButtonProps) {
+  const hasLabel = label !== undefined && label !== "";
+
   return (
     <button
       onClick={onClick}
@@ -34,13 +37,15 @@ function PillButton({ label, active, icon, onClick, ariaLabel, style }: PillButt
       style={{
         display: "flex",
         alignItems: "center",
-        gap: "12px",
-        width: "100%",
-        height: PILL_HEIGHT,
+        justifyContent: hasLabel ? undefined : "center",
+        gap: hasLabel ? "12px" : 0,
+        width: hasLabel ? "100%" : size,
+        height: size,
         borderRadius: "9999px",
         border: "none",
         cursor: "pointer",
-        paddingRight: "20px",
+        padding: 0,
+        paddingRight: hasLabel ? "20px" : 0,
         background: active
           ? "var(--accent)"
           : "var(--accent-dim)",
@@ -57,8 +62,8 @@ function PillButton({ label, active, icon, onClick, ariaLabel, style }: PillButt
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          width: PILL_HEIGHT,
-          height: PILL_HEIGHT,
+          width: size,
+          height: size,
           borderRadius: "50%",
           flexShrink: 0,
           background: active
@@ -69,24 +74,26 @@ function PillButton({ label, active, icon, onClick, ariaLabel, style }: PillButt
         {icon}
       </span>
 
-      {/* Text label — centered in remaining space */}
-      <span
-        style={{
-          flex: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontWeight: 600,
-          fontSize: "15px",
-          letterSpacing: "0.01em",
-          color: active
-            ? "var(--accent-foreground)"
-            : "var(--text-secondary)",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {label}
-      </span>
+      {/* Text label — centered in remaining space, hidden when no label */}
+      {hasLabel && (
+        <span
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontWeight: 600,
+            fontSize: "15px",
+            letterSpacing: "0.01em",
+            color: active
+              ? "var(--accent-foreground)"
+              : "var(--text-secondary)",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {label}
+        </span>
+      )}
     </button>
   );
 }
