@@ -10,6 +10,13 @@ function getFocusDuration(entries: { type: string; duration: number }[] | undefi
     .reduce((sum, e) => sum + e.duration, 0);
 }
 
+function getBreakDuration(entries: { type: string; duration: number }[] | undefined): number {
+  if (!entries) return 0;
+  return entries
+    .filter((e) => e.type === "break")
+    .reduce((sum, e) => sum + e.duration, 0);
+}
+
 export default function StatsSection() {
   const sessions = useSessionsStore((s) => s.sessions);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
@@ -270,7 +277,7 @@ export default function StatsSection() {
           {[...sessions].reverse().map((s) => {
             const entries = s.entries ?? [];
             const focusDur = getFocusDuration(entries);
-            const breakEntry = entries.find((e) => e.type === "break");
+            const breakDur = getBreakDuration(entries);
             const isOpen = expanded.has(s.id);
             return (
               <div
@@ -365,7 +372,7 @@ export default function StatsSection() {
                         Break
                       </span>
                       <span style={{ fontWeight: 500, color: "var(--fg)" }}>
-                        {breakEntry ? formatDuration(breakEntry.duration) : "—"}
+                        {breakDur > 0 ? formatDuration(breakDur) : "—"}
                       </span>
                     </div>
                   </div>

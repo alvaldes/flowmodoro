@@ -246,7 +246,7 @@
     color: var(--fg);
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
     overflow-x: hidden;
-    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     transition: background var(--motion-base) var(--ease-standard),

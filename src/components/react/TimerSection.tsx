@@ -1,7 +1,7 @@
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { formatDuration, formatTimeShort, formatDate } from "@/lib/format";
 import { useSettingsStore } from "@/stores/settings-store";
-import type { AppState, SessionEntry } from "@/stores/types";
+import type { AppState } from "@/stores/types";
 import type { CurrentSessionInfo } from "@/hooks/usePreciseTimer";
 import AnalogDial from "./AnalogDial";
 import { Play, Square, Coffee, X } from "lucide-react";
@@ -170,6 +170,9 @@ export default function TimerSection({
         flexDirection: "column",
         alignItems: "center",
         paddingTop: "16px",
+        flex: 1,
+        minHeight: 0,
+        width: "100%",
       }}
     >
       <AnalogDial
@@ -201,6 +204,7 @@ export default function TimerSection({
           marginTop: "48px",
           flexDirection: "column",
           minHeight: 48,
+          flexShrink: 0,
         }}
       >
         {appState === "idle" && (
@@ -270,26 +274,31 @@ export default function TimerSection({
           )}
         </div>
 
-      {/* Current session info */}
+      {/* Current session info — card with fixed header and scrollable entries */}
       {currentSession && (
         <div
           style={{
             width: "100%",
             marginTop: "32px",
+            flex: 1,
+            minHeight: 0,
             background: "var(--surface)",
             borderRadius: "var(--radius-lg, 22px)",
-            padding: "16px 20px",
             boxShadow: "var(--neu-raised-sm)",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
           }}
         >
-          {/* Session header */}
+          {/* Fixed header */}
           <div
             style={{
               fontSize: "12px",
               color: "var(--text-tertiary)",
-              marginBottom: "12px",
               display: "flex",
               justifyContent: "space-between",
+              padding: "16px 20px 12px",
+              flexShrink: 0,
             }}
           >
             <span>
@@ -298,112 +307,123 @@ export default function TimerSection({
             </span>
           </div>
 
-          {/* Entry list */}
-          {currentSession.entries.map((entry, i) => (
-            <div
-              key={i}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "6px 0",
-                borderTop: i > 0 ? "1px solid var(--tick-bg)" : "none",
-              }}
-            >
-              <span
+          {/* Scrollable entries */}
+          <div
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              padding: "0 20px 16px",
+            }}
+          >
+            {/* In-progress entry (always first) */}
+            {appState === "focusing" && (
+              <div
                 style={{
-                  fontSize: "13px",
-                  fontWeight: 500,
-                  color:
-                    entry.type === "focus"
-                      ? "var(--accent)"
-                      : "var(--text-secondary)",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "6px 0",
+                  borderTop: "none",
                 }}
               >
-                {entry.type === "focus" ? "Focus" : "Break"}
-              </span>
-              <span
+                <span
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: 500,
+                    color: "var(--accent)",
+                  }}
+                >
+                  Focus
+                </span>
+                <span
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: 500,
+                    color: "var(--fg)",
+                    fontVariantNumeric: "tabular-nums",
+                  }}
+                >
+                  {formatDuration(currentSession.focusSeconds)}
+                </span>
+              </div>
+            )}
+            {appState === "resting" && currentSession.breakSeconds > 0 && (
+              <div
                 style={{
-                  fontSize: "13px",
-                  fontWeight: 500,
-                  color: "var(--fg)",
-                  fontVariantNumeric: "tabular-nums",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "6px 0",
+                  borderTop: "none",
                 }}
               >
-                {formatDuration(entry.duration)}
-              </span>
-            </div>
-          ))}
+                <span
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: 500,
+                    color: "var(--text-secondary)",
+                  }}
+                >
+                  Break
+                </span>
+                <span
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: 500,
+                    color: "var(--fg)",
+                    fontVariantNumeric: "tabular-nums",
+                  }}
+                >
+                  {formatDuration(currentSession.breakSeconds)}
+                </span>
+              </div>
+            )}
 
-          {/* In-progress entry */}
-          {appState === "focusing" && (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "6px 0",
-                borderTop:
-                  currentSession.entries.length > 0
-                    ? "1px solid var(--tick-bg)"
-                    : "none",
-              }}
-            >
-              <span
+            {/* Historical entries */}
+            {currentSession.entries.map((entry, i) => {
+              const hasInProgressAbove =
+                appState === "focusing" ||
+                (appState === "resting" && currentSession.breakSeconds > 0);
+              return (
+              <div
+                key={i}
                 style={{
-                  fontSize: "13px",
-                  fontWeight: 500,
-                  color: "var(--accent)",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "6px 0",
+                  borderTop:
+                    i > 0 || hasInProgressAbove
+                      ? "1px solid var(--tick-bg)"
+                      : "none",
                 }}
               >
-                Focus
-              </span>
-              <span
-                style={{
-                  fontSize: "13px",
-                  fontWeight: 500,
-                  color: "var(--fg)",
-                  fontVariantNumeric: "tabular-nums",
-                }}
-              >
-                {formatDuration(currentSession.focusSeconds)}
-              </span>
-            </div>
-          )}
-          {appState === "resting" && currentSession.breakSeconds > 0 && (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "6px 0",
-                borderTop:
-                  currentSession.entries.length > 0
-                    ? "1px solid var(--tick-bg)"
-                    : "none",
-              }}
-            >
-              <span
-                style={{
-                  fontSize: "13px",
-                  fontWeight: 500,
-                  color: "var(--text-secondary)",
-                }}
-              >
-                Break
-              </span>
-              <span
-                style={{
-                  fontSize: "13px",
-                  fontWeight: 500,
-                  color: "var(--fg)",
-                  fontVariantNumeric: "tabular-nums",
-                }}
-              >
-                {formatDuration(currentSession.breakSeconds)}
-              </span>
-            </div>
-          )}
+                <span
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: 500,
+                    color:
+                      entry.type === "focus"
+                        ? "var(--accent)"
+                        : "var(--text-secondary)",
+                  }}
+                >
+                  {entry.type === "focus" ? "Focus" : "Break"}
+                </span>
+                <span
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: 500,
+                    color: "var(--fg)",
+                    fontVariantNumeric: "tabular-nums",
+                  }}
+                >
+                  {formatDuration(entry.duration)}
+                </span>
+              </div>
+            );
+            })}
+          </div>
         </div>
       )}
     </div>
