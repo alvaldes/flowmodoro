@@ -18,6 +18,14 @@ function migrateOldSession(old: Record<string, unknown>): Session {
   };
 }
 
+/** Remove entries where startedAt is negative (corrupt data from hiddenAt bug). */
+function cleanCorruptEntries(session: Session): Session {
+  return {
+    ...session,
+    entries: session.entries.filter((e) => e.startedAt >= 0),
+  };
+}
+
 export const useSessionsStore = create<SessionsStore>()(
   persist(
     (set) => ({
@@ -49,12 +57,18 @@ export const useSessionsStore = create<SessionsStore>()(
     }),
     {
       name: STORAGE_KEYS.SESSIONS,
-      version: 1,
-      migrate: (persisted) => {
+      version: 2,
+      migrate: (persisted, version) => {
         const state = persisted as { sessions?: unknown[] };
-        const sessions = (state.sessions ?? []).map((s) =>
+        let sessions = (state.sessions ?? []).map((s) =>
           migrateOldSession(s as Record<string, unknown>)
         );
+
+        // Version 2: remove entries with negative startedAt (corrupt data)
+        if ((version ?? 0) < 2) {
+          sessions = sessions.map(cleanCorruptEntries);
+        }
+
         return { sessions };
       },
       partialize: (state) => ({

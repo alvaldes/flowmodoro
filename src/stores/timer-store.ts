@@ -40,6 +40,7 @@ export const useTimerStore = create<TimerStore>()(
       applyBackgroundDelta: () => {
         const state = get();
         if (state.appState === "idle" || state.appState === "completed") return;
+        if (state.hiddenAt === 0) return;
         const now = Date.now();
         const elapsed = Math.floor((now - state.hiddenAt) / 1000);
         if (elapsed <= 0) return;
@@ -152,6 +153,8 @@ export const useTimerStore = create<TimerStore>()(
         time: state.time,
         currentSessionId: state.currentSessionId,
         sessionStartedAt: state.sessionStartedAt,
+        hiddenAt: state.hiddenAt,
+        lastTickTimestamp: state.lastTickTimestamp,
       }),
       skipHydration: true,
     }
