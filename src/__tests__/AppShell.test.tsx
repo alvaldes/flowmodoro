@@ -3,6 +3,17 @@ import { render, screen } from "@testing-library/react";
 import AppShell from "@/components/react/AppShell";
 
 // Mock hooks
+vi.mock("@/hooks/useAudioAlert", () => ({
+  useAudioAlert: () => ({
+    playFocus: vi.fn(),
+    playBreak: vi.fn(),
+    playEnd: vi.fn(),
+    stop: vi.fn(),
+    preview: vi.fn(),
+    isPlaying: false,
+  }),
+}));
+
 vi.mock("@/hooks/usePreciseTimer", () => ({
   usePreciseTimer: () => ({
     appState: "idle",
@@ -12,15 +23,6 @@ vi.mock("@/hooks/usePreciseTimer", () => ({
     end: vi.fn(),
     dismissCompleted: vi.fn(),
     nameSession: vi.fn(),
-  }),
-}));
-
-vi.mock("@/hooks/useAudioAlert", () => ({
-  useAudioAlert: () => ({
-    play: vi.fn(),
-    stop: vi.fn(),
-    preview: vi.fn(),
-    isPlaying: false,
   }),
 }));
 

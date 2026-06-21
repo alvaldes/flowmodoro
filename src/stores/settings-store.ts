@@ -15,7 +15,9 @@ export const useSettingsStore = create<SettingsStore>()(
     (set) => ({
       restRatio: TIMER.DEFAULT_REST_RATIO,
       darkMode: getSystemDarkMode(),
-      alarmSound: "classic-alarm" as AlarmSoundId,
+      focusAlarmSound: "notification-bell" as AlarmSoundId,
+      breakAlarmSound: "uplifting-bells" as AlarmSoundId,
+      endAlarmSound: "achievement-bell" as AlarmSoundId,
       volume: 0.5,
       notificationsEnabled: false,
       autoFocusAfterBreak: true,
@@ -27,7 +29,9 @@ export const useSettingsStore = create<SettingsStore>()(
 
       toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
 
-      setAlarmSound: (sound: AlarmSoundId) => set({ alarmSound: sound }),
+      setFocusAlarmSound: (sound: AlarmSoundId) => set({ focusAlarmSound: sound }),
+      setBreakAlarmSound: (sound: AlarmSoundId) => set({ breakAlarmSound: sound }),
+      setEndAlarmSound: (sound: AlarmSoundId) => set({ endAlarmSound: sound }),
 
       setVolume: (volume: number) =>
         set({ volume: Math.min(Math.max(volume, 0), 1) }),
@@ -43,7 +47,9 @@ export const useSettingsStore = create<SettingsStore>()(
       partialize: (state) => ({
         restRatio: state.restRatio,
         darkMode: state.darkMode,
-        alarmSound: state.alarmSound,
+        focusAlarmSound: state.focusAlarmSound,
+        breakAlarmSound: state.breakAlarmSound,
+        endAlarmSound: state.endAlarmSound,
         volume: state.volume,
         notificationsEnabled: state.notificationsEnabled,
         autoFocusAfterBreak: state.autoFocusAfterBreak,

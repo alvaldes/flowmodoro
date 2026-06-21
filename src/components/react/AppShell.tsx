@@ -32,7 +32,7 @@ export default function AppShell() {
   usePreWarmAudio();
 
   // Audio alert
-  const { play: playAlarm } = useAudioAlert();
+  const { playFocus, playBreak, playEnd } = useAudioAlert();
 
   // Browser notification
   const { show: showNotification } = useNotification();
@@ -40,19 +40,37 @@ export default function AppShell() {
   // Handle session completion side effects
   const handleSessionEnd = useCallback(
     (focusDuration: number) => {
-      playAlarm();
+      playEnd();
       if (notificationsEnabled) {
         showNotification("Flow Session Complete!", {
           body: `You focused for ${formatDuration(focusDuration)}`,
         });
       }
     },
-    [playAlarm, showNotification, notificationsEnabled],
+    [playEnd, showNotification, notificationsEnabled],
+  );
+
+  const handleFocusStart = useCallback(() => {
+    playFocus();
+  }, [playFocus]);
+
+  const handleBreakStart = useCallback(
+    (focusDuration: number) => {
+      playBreak();
+      if (notificationsEnabled) {
+        showNotification("Break Time!", {
+          body: `You focused for ${formatDuration(focusDuration)}`,
+        });
+      }
+    },
+    [playBreak, showNotification, notificationsEnabled],
   );
 
   // Timer engine
   const timer = usePreciseTimer({
     onSessionEnd: handleSessionEnd,
+    onFocusStart: handleFocusStart,
+    onBreakStart: handleBreakStart,
   });
 
   // Sync dark mode to DOM

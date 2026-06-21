@@ -7,6 +7,8 @@ import type { Session, SessionEntry } from "@/stores/types";
 
 interface UsePreciseTimerOptions {
   onSessionEnd?: (focusDuration: number) => void;
+  onFocusStart?: () => void;
+  onBreakStart?: (focusDuration: number) => void;
 }
 
 interface UsePreciseTimerReturn {
@@ -20,7 +22,7 @@ interface UsePreciseTimerReturn {
 }
 
 export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePreciseTimerReturn {
-  const { onSessionEnd } = options;
+  const { onSessionEnd, onFocusStart, onBreakStart } = options;
   const prevAppState = useRef<string | null>(null);
   const currentSessionId = useRef<string | null>(null);
   const breakTracker = useRef<{ startedAt: number; totalSeconds: number } | null>(null);
@@ -43,7 +45,8 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
       breakTracker.current = null;
     }
     useTimerStore.getState().start();
-  }, []);
+    onFocusStart?.();
+  }, [onFocusStart]);
 
   const dismissCompleted = useCallback(() => useTimerStore.getState().dismissCompleted(), []);
 
@@ -72,7 +75,7 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
       };
       useSessionsStore.getState().addSession(session);
       currentSessionId.current = id;
-      onSessionEnd?.(focusTime);
+      onBreakStart?.(focusTime);
     }
     const restRatioVal = useSettingsStore.getState().restRatio;
     const restDuration = Math.max(
@@ -81,7 +84,7 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
     );
     breakTracker.current = { startedAt: Date.now(), totalSeconds: restDuration };
     useTimerStore.getState().takeBreak(restRatio, focusTime);
-  }, [onSessionEnd]);
+  }, [onBreakStart]);
 
   const end = useCallback(() => {
     const { time: focusTime } = useTimerStore.getState();

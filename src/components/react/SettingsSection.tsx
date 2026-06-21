@@ -6,24 +6,126 @@ import type { AlarmSoundId } from "@/stores/types";
 import { Switch } from "@/components/ui/switch";
 import { Play, Square } from "lucide-react";
 import { PillButton } from "@/components/react/TimerSection";
+import { useState, useEffect } from "react";
+
+interface SoundRowProps {
+  label: string;
+  description: string;
+  soundId: string;
+  value: AlarmSoundId;
+  onChange: (sound: AlarmSoundId) => void;
+  previewingId: string | null;
+  isPlaying: boolean;
+  onPreview: (id: string, soundId: AlarmSoundId) => void;
+  onStop: () => void;
+}
+
+function SoundRow({ label, description, soundId, value, onChange, previewingId, isPlaying, onPreview, onStop }: SoundRowProps) {
+  const isThisPlaying = previewingId === soundId && isPlaying;
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <div>
+        <div
+          style={{ fontWeight: 500, fontSize: "15px", color: "var(--fg)" }}
+        >
+          {label}
+        </div>
+        <div
+          style={{
+            fontSize: "12px",
+            color: "var(--text-tertiary)",
+            marginTop: "2px",
+          }}
+        >
+          {description}
+        </div>
+      </div>
+      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value as AlarmSoundId)}
+          aria-label={label}
+          style={{
+            background: "var(--surface)",
+            border: "none",
+            borderRadius: "var(--radius-sm, 10px)",
+            padding: "8px 12px",
+            fontSize: "13px",
+            color: "var(--fg)",
+            cursor: "pointer",
+            boxShadow: "var(--neu-pressed-xs)",
+          }}
+        >
+          <option value="none">None</option>
+          {ALARM_SOUNDS.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.label}
+            </option>
+          ))}
+        </select>
+        <PillButton
+          active={isThisPlaying}
+          icon={
+            isThisPlaying
+              ? <Square size={16} fill="currentColor" />
+              : <Play size={18} fill="currentColor" />
+          }
+          onClick={isThisPlaying ? onStop : () => onPreview(soundId, value)}
+          ariaLabel={isThisPlaying ? `Stop ${label} preview` : `Preview ${label} sound`}
+          size={34}
+          style={{ background: "none", boxShadow: "none" }}
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function SettingsSection() {
   const {
     restRatio,
     darkMode,
-    alarmSound,
+    focusAlarmSound,
+    breakAlarmSound,
+    endAlarmSound,
     volume,
     notificationsEnabled,
     autoFocusAfterBreak,
     setRestRatio,
     toggleDarkMode,
-    setAlarmSound,
+    setFocusAlarmSound,
+    setBreakAlarmSound,
+    setEndAlarmSound,
     setVolume,
     toggleNotifications,
     toggleAutoFocus,
   } = useSettingsStore();
   const sessionCount = useSessionsStore((s) => s.sessions.length);
   const { preview, stop, isPlaying } = useAudioAlert();
+  const [previewingId, setPreviewingId] = useState<string | null>(null);
+
+  // Reset previewingId when audio stops naturally
+  useEffect(() => {
+    if (!isPlaying) {
+      setPreviewingId(null);
+    }
+  }, [isPlaying]);
+
+  const handlePreview = (id: string, soundId: AlarmSoundId) => {
+    setPreviewingId(id);
+    preview(soundId);
+  };
+
+  const handleStop = () => {
+    stop();
+    setPreviewingId(null);
+  };
 
   return (
     <div style={{ marginTop: "24px" }}>
@@ -172,7 +274,7 @@ export default function SettingsSection() {
         />
       </div>
 
-      {/* Alarm Sound */}
+      {/* Alarm Sounds */}
       <h3
         style={{
           fontSize: "15px",
@@ -199,65 +301,44 @@ export default function SettingsSection() {
             "box-shadow var(--motion-base, 250ms) var(--ease-standard)",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <div
-              style={{ fontWeight: 500, fontSize: "15px", color: "var(--fg)" }}
-            >
-              Sound
-            </div>
-            <div
-              style={{
-                fontSize: "12px",
-                color: "var(--text-tertiary)",
-                marginTop: "2px",
-              }}
-            >
-              Alarm when session ends
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-            <select
-              value={alarmSound}
-              onChange={(e) => setAlarmSound(e.target.value as AlarmSoundId)}
-              aria-label="Alarm sound"
-              style={{
-                background: "var(--surface)",
-                border: "none",
-                borderRadius: "var(--radius-sm, 10px)",
-                padding: "8px 12px",
-                fontSize: "13px",
-                color: "var(--fg)",
-                cursor: "pointer",
-                boxShadow: "var(--neu-pressed-xs)",
-              }}
-            >
-              {ALARM_SOUNDS.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-            <PillButton
-              active={isPlaying}
-              icon={
-                isPlaying
-                  ? <Square size={16} fill="currentColor" />
-                  : <Play size={18} fill="currentColor" />
-              }
-              onClick={isPlaying ? stop : () => preview(alarmSound)}
-              ariaLabel={isPlaying ? "Stop alarm preview" : "Preview alarm sound"}
-              size={34}
-              style={{ background: "none", boxShadow: "none" }}
-            />
-          </div>
-        </div>
+        {/* Focus Start */}
+        <SoundRow
+          label="Focus Start"
+          description="When focus begins or resumes"
+          soundId="focus"
+          value={focusAlarmSound}
+          onChange={setFocusAlarmSound}
+          previewingId={previewingId}
+          isPlaying={isPlaying}
+          onPreview={handlePreview}
+          onStop={handleStop}
+        />
+
+        {/* Break Start */}
+        <SoundRow
+          label="Break Start"
+          description="When break begins"
+          soundId="break"
+          value={breakAlarmSound}
+          onChange={setBreakAlarmSound}
+          previewingId={previewingId}
+          isPlaying={isPlaying}
+          onPreview={handlePreview}
+          onStop={handleStop}
+        />
+
+        {/* Session Complete */}
+        <SoundRow
+          label="Session Complete"
+          description="When session ends"
+          soundId="end"
+          value={endAlarmSound}
+          onChange={setEndAlarmSound}
+          previewingId={previewingId}
+          isPlaying={isPlaying}
+          onPreview={handlePreview}
+          onStop={handleStop}
+        />
 
         <div
           style={{

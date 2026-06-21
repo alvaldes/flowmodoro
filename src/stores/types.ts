@@ -1,6 +1,7 @@
 export type AppState = "idle" | "focusing" | "resting" | "completed";
 
 export type AlarmSoundId =
+  | "none"
   | "achievement-bell"
   | "bell-notification"
   | "casino-reward"
@@ -48,7 +49,9 @@ export interface TimerActions {
 export interface SettingsState {
   restRatio: number;
   darkMode: boolean;
-  alarmSound: AlarmSoundId;
+  focusAlarmSound: AlarmSoundId;
+  breakAlarmSound: AlarmSoundId;
+  endAlarmSound: AlarmSoundId;
   volume: number;
   notificationsEnabled: boolean;
   autoFocusAfterBreak: boolean;
@@ -57,7 +60,9 @@ export interface SettingsState {
 export interface SettingsActions {
   setRestRatio: (ratio: number) => void;
   toggleDarkMode: () => void;
-  setAlarmSound: (sound: AlarmSoundId) => void;
+  setFocusAlarmSound: (sound: AlarmSoundId) => void;
+  setBreakAlarmSound: (sound: AlarmSoundId) => void;
+  setEndAlarmSound: (sound: AlarmSoundId) => void;
   setVolume: (volume: number) => void;
   toggleNotifications: () => void;
   toggleAutoFocus: () => void;

@@ -6,7 +6,9 @@ describe("settings-store", () => {
     useSettingsStore.setState({
       restRatio: 0.2,
       darkMode: false,
-      alarmSound: "classic-alarm",
+      focusAlarmSound: "notification-bell",
+      breakAlarmSound: "uplifting-bells",
+      endAlarmSound: "achievement-bell",
       volume: 0.5,
       notificationsEnabled: false,
     });
@@ -38,9 +40,19 @@ describe("settings-store", () => {
     expect(useSettingsStore.getState().darkMode).toBe(false);
   });
 
-  it("setAlarmSound updates the alarm sound", () => {
-    useSettingsStore.getState().setAlarmSound("classic-alarm");
-    expect(useSettingsStore.getState().alarmSound).toBe("classic-alarm");
+  it("setFocusAlarmSound updates the focus alarm sound", () => {
+    useSettingsStore.getState().setFocusAlarmSound("digital-alarm");
+    expect(useSettingsStore.getState().focusAlarmSound).toBe("digital-alarm");
+  });
+
+  it("setBreakAlarmSound updates the break alarm sound", () => {
+    useSettingsStore.getState().setBreakAlarmSound("bell-notification");
+    expect(useSettingsStore.getState().breakAlarmSound).toBe("bell-notification");
+  });
+
+  it("setEndAlarmSound updates the end alarm sound", () => {
+    useSettingsStore.getState().setEndAlarmSound("achievement-bell");
+    expect(useSettingsStore.getState().endAlarmSound).toBe("achievement-bell");
   });
 
   it("setVolume updates the volume", () => {

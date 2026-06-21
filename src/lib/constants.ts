@@ -1,6 +1,7 @@
 export const DAY_LABELS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] as const;
 
 export type AlarmSoundId =
+  | "none"
   | "achievement-bell"
   | "bell-notification"
   | "casino-reward"

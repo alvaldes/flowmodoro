@@ -4,57 +4,65 @@ import { ALARM_SOUNDS } from "@/lib/constants";
 import type { AlarmSoundId } from "@/stores/types";
 
 interface UseAudioAlertReturn {
-  play: () => void;
+  playFocus: () => void;
+  playBreak: () => void;
+  playEnd: () => void;
   stop: () => void;
   preview: (soundId: AlarmSoundId) => void;
   isPlaying: boolean;
 }
 
+function createAndPlayAudio(soundId: AlarmSoundId, audioRef: React.MutableRefObject<HTMLAudioElement | null>, setIsPlaying: (v: boolean) => void) {
+  if (soundId === "none") return;
+
+  const sound = ALARM_SOUNDS.find((s) => s.id === soundId);
+  const url = sound?.file ?? ALARM_SOUNDS[0].file;
+
+  if (audioRef.current) {
+    audioRef.current.pause();
+    audioRef.current.currentTime = 0;
+  }
+
+  const audio = new Audio(url);
+  audio.volume = useSettingsStore.getState().volume;
+  audioRef.current = audio;
+  audio.play().catch(() => {});
+  setIsPlaying(true);
+  audio.addEventListener("ended", () => {
+    setIsPlaying(false);
+  }, { once: true });
+}
+
 export function useAudioAlert(): UseAudioAlertReturn {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const currentSoundRef = useRef<AlarmSoundId>("classic-alarm");
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const { alarmSound, volume } = useSettingsStore();
+  const volume = useSettingsStore((s) => s.volume);
 
-  // Update current sound when settings change
+  // Sync volume on existing audio element
   useEffect(() => {
-    currentSoundRef.current = alarmSound;
     if (audioRef.current) {
       audioRef.current.volume = volume;
     }
-  }, [alarmSound, volume]);
+  }, [volume]);
 
-  const getSoundUrl = useCallback((soundId: AlarmSoundId): string => {
-    const sound = ALARM_SOUNDS.find((s) => s.id === soundId);
-    return sound?.file ?? ALARM_SOUNDS[0].file;
+  const playFocus = useCallback(() => {
+    if (document.hidden) return;
+    const soundId = useSettingsStore.getState().focusAlarmSound;
+    createAndPlayAudio(soundId, audioRef, setIsPlaying);
   }, []);
 
-  const play = useCallback(() => {
-    // Don't play sound if tab is hidden (user can't hear it)
+  const playBreak = useCallback(() => {
     if (document.hidden) return;
+    const soundId = useSettingsStore.getState().breakAlarmSound;
+    createAndPlayAudio(soundId, audioRef, setIsPlaying);
+  }, []);
 
-    const soundId = currentSoundRef.current;
-    const url = getSoundUrl(soundId);
-
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
-
-    const audio = new Audio(url);
-    audio.volume = useSettingsStore.getState().volume;
-    audioRef.current = audio;
-
-    audio.play().catch(() => {
-      // Autoplay blocked — will be handled by pre-warm
-    });
-
-    setIsPlaying(true);
-    audio.addEventListener("ended", () => {
-      setIsPlaying(false);
-    }, { once: true });
-  }, [getSoundUrl]);
+  const playEnd = useCallback(() => {
+    if (document.hidden) return;
+    const soundId = useSettingsStore.getState().endAlarmSound;
+    createAndPlayAudio(soundId, audioRef, setIsPlaying);
+  }, []);
 
   const stop = useCallback(() => {
     if (audioRef.current) {
@@ -65,20 +73,8 @@ export function useAudioAlert(): UseAudioAlertReturn {
   }, []);
 
   const preview = useCallback((soundId: AlarmSoundId) => {
-    const url = getSoundUrl(soundId);
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
-    const audio = new Audio(url);
-    audio.volume = useSettingsStore.getState().volume;
-    audioRef.current = audio;
-    audio.play().catch(() => {});
-    setIsPlaying(true);
-    audio.addEventListener("ended", () => {
-      setIsPlaying(false);
-    }, { once: true });
-  }, [getSoundUrl]);
+    createAndPlayAudio(soundId, audioRef, setIsPlaying);
+  }, []);
 
-  return { play, stop, preview, isPlaying };
+  return { playFocus, playBreak, playEnd, stop, preview, isPlaying };
 }
