@@ -602,11 +602,11 @@ export default function SettingsSection() {
           <DialogTrigger
             render={
               <Button
-                variant="destructive"
+                variant="outline"
                 size="sm"
-                className="gap-1.5 shrink-0"
+                className="gap-1.5 shrink-0 text-destructive border-destructive/40 hover:bg-destructive/10"
               >
-                <Trash2 size={14} />
+                <Trash2 size={15} />
                 Delete
               </Button>
             }
@@ -625,11 +625,11 @@ export default function SettingsSection() {
                 render={<Button variant="outline">Cancel</Button>}
               />
               <Button
-                variant="destructive"
-                className="gap-1.5"
+                variant="default"
+                className="gap-1.5 bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 onClick={clearAllData}
               >
-                <Trash2 size={14} />
+                <Trash2 size={15} />
                 Delete Everything
               </Button>
             </DialogFooter>
