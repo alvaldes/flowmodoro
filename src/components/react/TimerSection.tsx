@@ -313,6 +313,7 @@ export default function TimerSection({
               flex: 1,
               overflowY: "auto",
               padding: "0 20px 16px",
+              minHeight: 150,
             }}
           >
             {/* In-progress entry (always first) */}

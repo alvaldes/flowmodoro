@@ -143,14 +143,13 @@ export default function AppShell() {
           maxWidth: "480px",
           margin: "0 auto",
           width: "100%",
-          height: "100dvh",
+          minHeight: "100dvh",
           display: "flex",
           flexDirection: "column",
           position: "relative",
           padding: "0 24px",
           paddingBottom: "88px",
           paddingTop: "0",
-          overflow: "hidden",
         }}
       >
         <header
@@ -179,7 +178,7 @@ export default function AppShell() {
           </h1>
         </header>
 
-        <main style={{ flex: 1, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+        <main style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
           <AnimatePresence mode="wait">
             {view === "timer" && (
               <motion.div key="timer" {...viewTransition} style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
@@ -195,12 +194,12 @@ export default function AppShell() {
               </motion.div>
             )}
             {view === "stats" && (
-              <motion.div key="stats" {...viewTransition} style={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
+              <motion.div key="stats" {...viewTransition} style={{ flex: 1, minHeight: 0 }}>
                 <StatsSection />
               </motion.div>
             )}
             {view === "settings" && (
-              <motion.div key="settings" {...viewTransition} style={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
+              <motion.div key="settings" {...viewTransition} style={{ flex: 1, minHeight: 0 }}>
                 <SettingsSection />
               </motion.div>
             )}
