@@ -4,7 +4,7 @@ import { useAudioAlert } from "@/hooks/useAudioAlert";
 import { ALARM_SOUNDS } from "@/lib/constants";
 import type { AlarmSoundId } from "@/stores/types";
 import { Switch } from "@/components/ui/switch";
-import { Play } from "lucide-react";
+import { Play, Square } from "lucide-react";
 import { PillButton } from "@/components/react/TimerSection";
 
 export default function SettingsSection() {
@@ -23,7 +23,7 @@ export default function SettingsSection() {
     toggleAutoFocus,
   } = useSettingsStore();
   const sessionCount = useSessionsStore((s) => s.sessions.length);
-  const { preview } = useAudioAlert();
+  const { preview, stop, isPlaying } = useAudioAlert();
 
   return (
     <div style={{ marginTop: "24px" }}>
@@ -245,10 +245,14 @@ export default function SettingsSection() {
               ))}
             </select>
             <PillButton
-              active={false}
-              icon={<Play size={18} fill="currentColor" />}
-              onClick={() => preview(alarmSound)}
-              ariaLabel="Preview alarm sound"
+              active={isPlaying}
+              icon={
+                isPlaying
+                  ? <Square size={16} fill="currentColor" />
+                  : <Play size={18} fill="currentColor" />
+              }
+              onClick={isPlaying ? stop : () => preview(alarmSound)}
+              ariaLabel={isPlaying ? "Stop alarm preview" : "Preview alarm sound"}
               size={34}
               style={{ background: "none", boxShadow: "none" }}
             />
