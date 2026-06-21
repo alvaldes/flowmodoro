@@ -2,12 +2,13 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Session, SessionEntry, SessionsActions, SessionsState } from "./types";
 import { STORAGE_KEYS } from "@/lib/constants";
+import { generateId } from "@/lib/utils";
 
 type SessionsStore = SessionsState & SessionsActions;
 
 function migrateOldSession(old: Record<string, unknown>): Session {
   return {
-    id: (old.id as string) || crypto.randomUUID(),
+    id: (old.id as string) || generateId(),
     timestamp: old.timestamp as number,
     entries: (old.entries as SessionEntry[]) || [
       { type: "focus", duration: old.duration as number, startedAt: (old.timestamp as number) - (old.duration as number) * 1000 },

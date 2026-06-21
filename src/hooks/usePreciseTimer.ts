@@ -3,6 +3,7 @@ import { useTimerStore } from "@/stores/timer-store";
 import { useSettingsStore } from "@/stores/settings-store";
 import { useSessionsStore } from "@/stores/sessions-store";
 import { TIMER } from "@/lib/constants";
+import { generateId } from "@/lib/utils";
 import type { Session, SessionEntry } from "@/stores/types";
 
 interface UsePreciseTimerOptions {
@@ -61,7 +62,7 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
     const { time: focusTime } = useTimerStore.getState();
     const { restRatio } = useSettingsStore.getState();
     if (focusTime > 0) {
-      const id = crypto.randomUUID();
+      const id = generateId();
       const now = Date.now();
       const focusEntry: SessionEntry = {
         type: "focus",
@@ -90,7 +91,7 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
     const { time: focusTime } = useTimerStore.getState();
     const info = useTimerStore.getState().end(focusTime);
     if (info) {
-      const id = crypto.randomUUID();
+      const id = generateId();
       const session: Session = {
         id,
         timestamp: info.timestamp,

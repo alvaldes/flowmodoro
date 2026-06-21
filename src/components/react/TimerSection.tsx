@@ -27,7 +27,15 @@ export interface PillButtonProps {
 
 export const PILL_HEIGHT = 48;
 
-export function PillButton({ label, active, icon, onClick, ariaLabel, size = PILL_HEIGHT, style }: PillButtonProps) {
+export function PillButton({
+  label,
+  active,
+  icon,
+  onClick,
+  ariaLabel,
+  size = PILL_HEIGHT,
+  style,
+}: PillButtonProps) {
   const hasLabel = label !== undefined && label !== "";
 
   return (
@@ -46,9 +54,7 @@ export function PillButton({ label, active, icon, onClick, ariaLabel, size = PIL
         cursor: "pointer",
         padding: 0,
         paddingRight: hasLabel ? "20px" : 0,
-        background: active
-          ? "var(--accent)"
-          : "var(--accent-dim)",
+        background: active ? "var(--accent)" : "var(--accent-dim)",
         boxShadow: active
           ? "0 4px 12px rgba(0,0,0,0.25), 0 1px 3px rgba(0,0,0,0.12)"
           : "0 2px 6px rgba(0,0,0,0.06)",
@@ -66,9 +72,7 @@ export function PillButton({ label, active, icon, onClick, ariaLabel, size = PIL
           height: size,
           borderRadius: "50%",
           flexShrink: 0,
-          background: active
-            ? "rgba(0,0,0,0.15)"
-            : "rgba(0,0,0,0.08)",
+          background: active ? "rgba(0,0,0,0.15)" : "rgba(0,0,0,0.08)",
         }}
       >
         {icon}
@@ -146,10 +150,17 @@ export default function TimerSection({
           }}
         >
           {appState === "idle" && (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: time > 0 ? "stretch" : "center", gap: "12px" }}>
-              <div style={{ width: time > 0 ? "100%" : "calc(50% - 6px)" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: time > 0 ? "stretch" : "center",
+                gap: "12px",
+              }}
+            >
+              <div style={{ width: time > 0 ? "100%" : "calc(55% - 6px)" }}>
                 <PillButton
-                  label="Start New Session"
+                  label="New Session"
                   active
                   icon={<Play size={18} fill="currentColor" />}
                   onClick={onStart}
@@ -191,7 +202,7 @@ export default function TimerSection({
 
           {appState === "resting" && (
             <div style={{ display: "flex", justifyContent: "center" }}>
-              <div style={{ width: "calc(50% - 6px)" }}>
+              <div style={{ width: "calc(55% - 6px)" }}>
                 <PillButton
                   label="Resume Focus"
                   active
