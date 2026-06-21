@@ -143,13 +143,14 @@ export default function AppShell() {
           maxWidth: "480px",
           margin: "0 auto",
           width: "100%",
-          minHeight: "100dvh",
+          height: "100dvh",
           display: "flex",
           flexDirection: "column",
           position: "relative",
           padding: "0 24px",
           paddingBottom: "88px",
           paddingTop: "0",
+          overflow: "hidden",
         }}
       >
         <header
@@ -178,7 +179,7 @@ export default function AppShell() {
           </h1>
         </header>
 
-        <main style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+        <main style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflowY: "auto" }}>
           <AnimatePresence mode="wait">
             {view === "timer" && (
               <motion.div key="timer" {...viewTransition} style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
