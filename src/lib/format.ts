@@ -23,6 +23,7 @@ export function formatDuration(seconds: number): string {
   const d = Math.floor(seconds / 86400);
   const h = Math.floor((seconds % 86400) / 3600);
   const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
 
   if (d > 0) {
     if (h > 0) return `${d}d ${h}h`;
@@ -32,8 +33,11 @@ export function formatDuration(seconds: number): string {
     if (m > 0) return `${h}h ${m}m`;
     return `${h}h`;
   }
-  if (m > 0) return `${m}m`;
-  return "0m";
+  if (m > 0) {
+    if (s > 0) return `${m}m ${s}s`;
+    return `${m}m`;
+  }
+  return `${s}s`;
 }
 
 export function formatDate(timestamp: number): string {

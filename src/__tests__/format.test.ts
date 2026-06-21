@@ -30,13 +30,23 @@ describe("formatTime", () => {
 });
 
 describe("formatDuration", () => {
-  it("formats 0 as 0m", () => {
-    expect(formatDuration(0)).toBe("0m");
+  it("formats 0 as 0s", () => {
+    expect(formatDuration(0)).toBe("0s");
+  });
+
+  it("formats seconds correctly", () => {
+    expect(formatDuration(30)).toBe("30s");
+    expect(formatDuration(59)).toBe("59s");
   });
 
   it("formats seconds to minutes", () => {
     expect(formatDuration(60)).toBe("1m");
     expect(formatDuration(600)).toBe("10m");
+  });
+
+  it("shows minutes and seconds when both present", () => {
+    expect(formatDuration(90)).toBe("1m 30s");
+    expect(formatDuration(119)).toBe("1m 59s");
   });
 
   it("omits zero minutes when showing hours", () => {
@@ -53,10 +63,5 @@ describe("formatDuration", () => {
     expect(formatDuration(86400)).toBe("1d");
     expect(formatDuration(90000)).toBe("1d 1h");
     expect(formatDuration(172800)).toBe("2d");
-  });
-
-  it("rounds down minutes", () => {
-    expect(formatDuration(90)).toBe("1m");
-    expect(formatDuration(119)).toBe("1m");
   });
 });

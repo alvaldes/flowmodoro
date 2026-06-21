@@ -184,6 +184,7 @@ export default function AppShell() {
                 appState={timer.appState}
                 time={timer.time}
                 initialRestTime={initialRestTime}
+                currentSession={timer.currentSession}
                 onStart={timer.start}
                 onBreak={timer.takeBreak}
                 onEnd={timer.end}

@@ -1,6 +1,7 @@
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { formatDuration } from "@/lib/format";
-import type { AppState } from "@/stores/types";
+import { formatDuration, formatTimeShort, formatDate } from "@/lib/format";
+import type { AppState, SessionEntry } from "@/stores/types";
+import type { CurrentSessionInfo } from "@/hooks/usePreciseTimer";
 import AnalogDial from "./AnalogDial";
 import { Play, Square, Coffee, X } from "lucide-react";
 
@@ -8,6 +9,7 @@ interface TimerSectionProps {
   appState: AppState;
   time: number;
   initialRestTime: number;
+  currentSession: CurrentSessionInfo | null;
   onStart: () => void;
   onBreak: () => void;
   onEnd: () => void;
@@ -110,6 +112,7 @@ export default function TimerSection({
   appState,
   time,
   initialRestTime,
+  currentSession,
   onStart,
   onBreak,
   onEnd,
@@ -213,6 +216,134 @@ export default function TimerSection({
                   ariaLabel="Resume focus"
                 />
               </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Current session info */}
+      {currentSession && (
+        <div
+          style={{
+            width: "100%",
+            marginTop: "32px",
+            background: "var(--surface)",
+            borderRadius: "var(--radius-lg, 22px)",
+            padding: "16px 20px",
+            boxShadow: "var(--neu-raised-sm)",
+          }}
+        >
+          {/* Session header */}
+          <div
+            style={{
+              fontSize: "12px",
+              color: "var(--text-tertiary)",
+              marginBottom: "12px",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <span>
+              Started {formatDate(currentSession.startedAt)}{" "}
+              {formatTimeShort(currentSession.startedAt)}
+            </span>
+          </div>
+
+          {/* Entry list */}
+          {currentSession.entries.map((entry, i) => (
+            <div
+              key={i}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "6px 0",
+                borderTop: i > 0 ? "1px solid var(--tick-bg)" : "none",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "13px",
+                  fontWeight: 500,
+                  color: entry.type === "focus" ? "var(--accent)" : "var(--text-secondary)",
+                }}
+              >
+                {entry.type === "focus" ? "Focus" : "Break"}
+              </span>
+              <span
+                style={{
+                  fontSize: "13px",
+                  fontWeight: 500,
+                  color: "var(--fg)",
+                  fontVariantNumeric: "tabular-nums",
+                }}
+              >
+                {formatDuration(entry.duration)}
+              </span>
+            </div>
+          ))}
+
+          {/* In-progress entry */}
+          {appState === "focusing" && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "6px 0",
+                borderTop: currentSession.entries.length > 0 ? "1px solid var(--tick-bg)" : "none",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "13px",
+                  fontWeight: 500,
+                  color: "var(--accent)",
+                }}
+              >
+                Focus
+              </span>
+              <span
+                style={{
+                  fontSize: "13px",
+                  fontWeight: 500,
+                  color: "var(--fg)",
+                  fontVariantNumeric: "tabular-nums",
+                }}
+              >
+                {formatDuration(currentSession.focusSeconds)}
+              </span>
+            </div>
+          )}
+          {appState === "resting" && currentSession.breakSeconds > 0 && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "6px 0",
+                borderTop: currentSession.entries.length > 0 ? "1px solid var(--tick-bg)" : "none",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "13px",
+                  fontWeight: 500,
+                  color: "var(--text-secondary)",
+                }}
+              >
+                Break
+              </span>
+              <span
+                style={{
+                  fontSize: "13px",
+                  fontWeight: 500,
+                  color: "var(--fg)",
+                  fontVariantNumeric: "tabular-nums",
+                }}
+              >
+                {formatDuration(currentSession.breakSeconds)}
+              </span>
             </div>
           )}
         </div>
