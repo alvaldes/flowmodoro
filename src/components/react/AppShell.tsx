@@ -119,36 +119,7 @@ export default function AppShell() {
           flexDirection: "column",
           position: "relative",
           padding: "0 24px",
-          paddingBottom: "88px",
-          paddingTop: "24px",
-          overflow: "hidden",
-        }}
-      >
-        <header style={{ padding: "20px 0", marginBottom: "24px" }}>
-          <h1 style={{ fontSize: "26px", display: "flex", alignItems: "center", gap: "10px" }}>
-            <img src="/favicon.svg" alt="" style={{ width: 28, height: 28 }} />
-            Flowmodoro
-          </h1>
-        </header>
-        <Onboarding onFinish={finishOnboarding} />
-      </div>
-    );
-  }
-
-  // --- Main App ---
-  return (
-      <div
-        className="app-container"
-        style={{
-          maxWidth: "480px",
-          margin: "0 auto",
-          width: "100%",
-          height: "100dvh",
-          display: "flex",
-          flexDirection: "column",
-          position: "relative",
-          padding: "0 24px",
-          paddingBottom: "88px",
+          paddingBottom: "2rem",
           paddingTop: "0",
           overflow: "hidden",
         }}
@@ -178,34 +149,107 @@ export default function AppShell() {
             Flowmodoro
           </h1>
         </header>
+        <Onboarding onFinish={finishOnboarding} />
+      </div>
+    );
+  }
 
-        <main style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflowY: "auto" }}>
-          <AnimatePresence mode="wait">
-            {view === "timer" && (
-              <motion.div key="timer" {...viewTransition} style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
-                <TimerSection
-                  appState={timer.appState}
-                  time={timer.time}
-                  initialRestTime={initialRestTime}
-                  currentSession={timer.currentSession}
-                  onStart={timer.start}
-                  onBreak={timer.takeBreak}
-                  onEnd={timer.end}
-                />
-              </motion.div>
-            )}
-            {view === "stats" && (
-              <motion.div key="stats" {...viewTransition} style={{ flex: 1, minHeight: 0 }}>
-                <StatsSection />
-              </motion.div>
-            )}
-            {view === "settings" && (
-              <motion.div key="settings" {...viewTransition} style={{ flex: 1, minHeight: 0 }}>
-                <SettingsSection />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </main>
+  // --- Main App ---
+  return (
+    <div
+      className="app-container"
+      style={{
+        maxWidth: "480px",
+        margin: "0 auto",
+        width: "100%",
+        height: "100dvh",
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        padding: "0 24px",
+        paddingBottom: "88px",
+        paddingTop: "0",
+        overflow: "hidden",
+      }}
+    >
+      <header
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "16px 0",
+          marginBottom: "8px",
+          flexShrink: 0,
+        }}
+      >
+        <h1
+          style={{
+            fontSize: "22px",
+            cursor: "pointer",
+            userSelect: "none",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+          onClick={() => setView("timer")}
+        >
+          <img src="/favicon.svg" alt="" style={{ width: 24, height: 24 }} />
+          Flowmodoro
+        </h1>
+      </header>
+
+      <main
+        style={{
+          flex: 1,
+          minHeight: 0,
+          display: "flex",
+          flexDirection: "column",
+          overflowY: "auto",
+        }}
+      >
+        <AnimatePresence mode="wait">
+          {view === "timer" && (
+            <motion.div
+              key="timer"
+              {...viewTransition}
+              style={{
+                flex: 1,
+                minHeight: 0,
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <TimerSection
+                appState={timer.appState}
+                time={timer.time}
+                initialRestTime={initialRestTime}
+                currentSession={timer.currentSession}
+                onStart={timer.start}
+                onBreak={timer.takeBreak}
+                onEnd={timer.end}
+              />
+            </motion.div>
+          )}
+          {view === "stats" && (
+            <motion.div
+              key="stats"
+              {...viewTransition}
+              style={{ flex: 1, minHeight: 0 }}
+            >
+              <StatsSection />
+            </motion.div>
+          )}
+          {view === "settings" && (
+            <motion.div
+              key="settings"
+              {...viewTransition}
+              style={{ flex: 1, minHeight: 0 }}
+            >
+              <SettingsSection />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
 
       <BottomNav view={view} onViewChange={setView} />
     </div>
