@@ -175,12 +175,14 @@ export default function TimerSection({
         width: "100%",
       }}
     >
-      <AnalogDial
-        time={time}
-        state={appState}
-        reducedMotion={reducedMotion}
-        initialRestTime={initialRestTime}
-      />
+      <div style={{ flexShrink: 0 }}>
+        <AnalogDial
+          time={time}
+          state={appState}
+          reducedMotion={reducedMotion}
+          initialRestTime={initialRestTime}
+        />
+      </div>
 
       {appState === "idle" && time > 0 && (
         <p
@@ -189,6 +191,7 @@ export default function TimerSection({
             color: "var(--text-secondary)",
             textAlign: "center",
             marginTop: "12px",
+            flexShrink: 0,
           }}
         >
           Last session: {formatDuration(time)}
