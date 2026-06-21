@@ -81,6 +81,7 @@ export function PillButton({
           borderRadius: "50%",
           flexShrink: 0,
           background: active ? "rgba(0,0,0,0.15)" : "rgba(0,0,0,0.08)",
+          color: active ? "var(--accent-foreground)" : "var(--text-secondary)",
         }}
       >
         {icon}
