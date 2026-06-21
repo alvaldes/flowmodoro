@@ -192,18 +192,18 @@ export default function TimerSection({
         </p>
       )}
 
-      {/* Action buttons */}
-      {appState !== "completed" && (
-        <div
-          style={{
-            display: "flex",
-            gap: "12px",
-            width: "100%",
-            marginTop: "48px",
-            flexDirection: "column",
-          }}
-        >
-          {appState === "idle" && (
+      {/* Action buttons — always rendered to prevent layout jump */}
+      <div
+        style={{
+          display: "flex",
+          gap: "12px",
+          width: "100%",
+          marginTop: "48px",
+          flexDirection: "column",
+          minHeight: 48,
+        }}
+      >
+        {appState === "idle" && (
             <div
               style={{
                 display: "flex",
@@ -269,7 +269,6 @@ export default function TimerSection({
             </div>
           )}
         </div>
-      )}
 
       {/* Current session info */}
       {currentSession && (
