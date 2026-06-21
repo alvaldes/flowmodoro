@@ -211,71 +211,71 @@ export default function TimerSection({
         }}
       >
         {appState === "idle" && (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: time > 0 ? "stretch" : "center",
-                gap: "12px",
-              }}
-            >
-              <div style={{ width: time > 0 ? "100%" : "calc(55% - 6px)" }}>
-                <PillButton
-                  label="New Session"
-                  active
-                  icon={<Play size={18} fill="currentColor" />}
-                  onClick={onStart}
-                  ariaLabel="Start new flow session"
-                />
-              </div>
-              {time > 0 && (
-                <PillButton
-                  label="Save and Close Session"
-                  active={false}
-                  icon={<X size={18} />}
-                  onClick={onEnd}
-                  ariaLabel="Save and close current session"
-                />
-              )}
-            </div>
-          )}
-
-          {appState === "focusing" && (
-            <div style={{ display: "flex", gap: "12px", width: "100%" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: time > 0 ? "stretch" : "center",
+              gap: "12px",
+            }}
+          >
+            <div style={{ width: time > 0 ? "100%" : "calc(55% - 6px)" }}>
               <PillButton
-                label="Take Break"
+                label="New Session"
                 active
-                icon={<Coffee size={18} />}
-                onClick={onBreak}
-                ariaLabel="Take a break"
-                style={{ flex: 1 }}
+                icon={<Play size={18} fill="currentColor" />}
+                onClick={onStart}
+                ariaLabel="Start new flow session"
               />
+            </div>
+            {time > 0 && (
               <PillButton
-                label="End Session"
+                label="Save and Close Session"
                 active={false}
-                icon={<Square size={18} fill="currentColor" />}
+                icon={<X size={18} />}
                 onClick={onEnd}
-                ariaLabel="End focus session"
-                style={{ flex: 1 }}
+                ariaLabel="Save and close current session"
+              />
+            )}
+          </div>
+        )}
+
+        {appState === "focusing" && (
+          <div style={{ display: "flex", gap: "12px", width: "100%" }}>
+            <PillButton
+              label="Take Break"
+              active
+              icon={<Coffee size={18} />}
+              onClick={onBreak}
+              ariaLabel="Take a break"
+              style={{ flex: 1 }}
+            />
+            <PillButton
+              label="End Session"
+              active={false}
+              icon={<Square size={18} fill="currentColor" />}
+              onClick={onEnd}
+              ariaLabel="End focus session"
+              style={{ flex: 1 }}
+            />
+          </div>
+        )}
+
+        {appState === "resting" && (
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <div style={{ width: "calc(55% - 6px)" }}>
+              <PillButton
+                label="Resume Focus"
+                active
+                icon={<Play size={18} fill="currentColor" />}
+                onClick={onStart}
+                ariaLabel="Resume focus"
+                progress={breakProgress}
               />
             </div>
-          )}
-
-          {appState === "resting" && (
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <div style={{ width: "calc(55% - 6px)" }}>
-                <PillButton
-                  label="Resume Focus"
-                  active
-                  icon={<Play size={18} fill="currentColor" />}
-                  onClick={onStart}
-                  ariaLabel="Resume focus"
-                  progress={breakProgress}
-                />
-              </div>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
+      </div>
 
       {/* Current session info — card with fixed header and scrollable entries */}
       {currentSession && (
@@ -388,43 +388,43 @@ export default function TimerSection({
                 appState === "focusing" ||
                 (appState === "resting" && currentSession.breakSeconds > 0);
               return (
-              <div
-                key={i}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  padding: "6px 0",
-                  borderTop:
-                    i > 0 || hasInProgressAbove
-                      ? "1px solid var(--tick-bg)"
-                      : "none",
-                }}
-              >
-                <span
+                <div
+                  key={i}
                   style={{
-                    fontSize: "13px",
-                    fontWeight: 500,
-                    color:
-                      entry.type === "focus"
-                        ? "var(--accent)"
-                        : "var(--text-secondary)",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "6px 0",
+                    borderTop:
+                      i > 0 || hasInProgressAbove
+                        ? "1px solid var(--tick-bg)"
+                        : "none",
                   }}
                 >
-                  {entry.type === "focus" ? "Focus" : "Break"}
-                </span>
-                <span
-                  style={{
-                    fontSize: "13px",
-                    fontWeight: 500,
-                    color: "var(--fg)",
-                    fontVariantNumeric: "tabular-nums",
-                  }}
-                >
-                  {formatDuration(entry.duration)}
-                </span>
-              </div>
-            );
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: 500,
+                      color:
+                        entry.type === "focus"
+                          ? "var(--accent)"
+                          : "var(--text-secondary)",
+                    }}
+                  >
+                    {entry.type === "focus" ? "Focus" : "Break"}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: 500,
+                      color: "var(--fg)",
+                      fontVariantNumeric: "tabular-nums",
+                    }}
+                  >
+                    {formatDuration(entry.duration)}
+                  </span>
+                </div>
+              );
             })}
           </div>
         </div>
