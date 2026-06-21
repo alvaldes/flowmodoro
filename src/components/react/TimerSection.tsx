@@ -1,5 +1,6 @@
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { formatDuration, formatTimeShort, formatDate } from "@/lib/format";
+import { useSettingsStore } from "@/stores/settings-store";
 import type { AppState, SessionEntry } from "@/stores/types";
 import type { CurrentSessionInfo } from "@/hooks/usePreciseTimer";
 import AnalogDial from "./AnalogDial";
@@ -25,6 +26,7 @@ export interface PillButtonProps {
   onClick: () => void;
   ariaLabel: string;
   size?: number;
+  progress?: number; // 0-1, renders circular progress ring around icon
   style?: React.CSSProperties;
 }
 
@@ -37,9 +39,11 @@ export function PillButton({
   onClick,
   ariaLabel,
   size = PILL_HEIGHT,
+  progress,
   style,
 }: PillButtonProps) {
   const hasLabel = label !== undefined && label !== "";
+  const circumference = 2 * Math.PI * (size / 2 - 4);
 
   return (
     <button
@@ -68,6 +72,7 @@ export function PillButton({
       {/* Circular icon container — fully rounded, darker than button bg */}
       <span
         style={{
+          position: "relative",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -79,6 +84,40 @@ export function PillButton({
         }}
       >
         {icon}
+        {progress !== undefined && (
+          <svg
+            viewBox={`0 0 ${size} ${size}`}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: size,
+              height: size,
+              transform: "rotate(-90deg)",
+            }}
+          >
+            {/* Track */}
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={size / 2 - 4}
+              fill="none"
+              stroke="rgba(0,0,0,0.00)"
+              strokeWidth={3}
+            />
+            {/* Progress */}
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={size / 2 - 4}
+              fill="none"
+              stroke="rgba(0,0,0,0.15)"
+              strokeWidth={3}
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={circumference * (1 - progress)}
+            />
+          </svg>
+        )}
       </span>
 
       {/* Text label — centered in remaining space, hidden when no label */}
@@ -118,6 +157,11 @@ export default function TimerSection({
   onEnd,
 }: TimerSectionProps) {
   const reducedMotion = useReducedMotion();
+  const autoFocusAfterBreak = useSettingsStore((s) => s.autoFocusAfterBreak);
+  const breakProgress =
+    appState === "resting" && initialRestTime > 0 && autoFocusAfterBreak
+      ? time / initialRestTime
+      : undefined;
 
   return (
     <div
@@ -128,7 +172,12 @@ export default function TimerSection({
         paddingTop: "16px",
       }}
     >
-      <AnalogDial time={time} state={appState} reducedMotion={reducedMotion} initialRestTime={initialRestTime} />
+      <AnalogDial
+        time={time}
+        state={appState}
+        reducedMotion={reducedMotion}
+        initialRestTime={initialRestTime}
+      />
 
       {appState === "idle" && time > 0 && (
         <p
@@ -214,6 +263,7 @@ export default function TimerSection({
                   icon={<Play size={18} fill="currentColor" />}
                   onClick={onStart}
                   ariaLabel="Resume focus"
+                  progress={breakProgress}
                 />
               </div>
             </div>
@@ -265,7 +315,10 @@ export default function TimerSection({
                 style={{
                   fontSize: "13px",
                   fontWeight: 500,
-                  color: entry.type === "focus" ? "var(--accent)" : "var(--text-secondary)",
+                  color:
+                    entry.type === "focus"
+                      ? "var(--accent)"
+                      : "var(--text-secondary)",
                 }}
               >
                 {entry.type === "focus" ? "Focus" : "Break"}
@@ -291,7 +344,10 @@ export default function TimerSection({
                 justifyContent: "space-between",
                 alignItems: "center",
                 padding: "6px 0",
-                borderTop: currentSession.entries.length > 0 ? "1px solid var(--tick-bg)" : "none",
+                borderTop:
+                  currentSession.entries.length > 0
+                    ? "1px solid var(--tick-bg)"
+                    : "none",
               }}
             >
               <span
@@ -322,7 +378,10 @@ export default function TimerSection({
                 justifyContent: "space-between",
                 alignItems: "center",
                 padding: "6px 0",
-                borderTop: currentSession.entries.length > 0 ? "1px solid var(--tick-bg)" : "none",
+                borderTop:
+                  currentSession.entries.length > 0
+                    ? "1px solid var(--tick-bg)"
+                    : "none",
               }}
             >
               <span

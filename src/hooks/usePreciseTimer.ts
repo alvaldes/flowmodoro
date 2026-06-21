@@ -181,12 +181,13 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
 
       if (autoFocusAfterBreak) {
         useTimerStore.getState().start();
+        onFocusStart?.();
         syncSession();
       }
     }, delay);
 
     return () => clearTimeout(timeout);
-  }, [appState]);
+  }, [appState, onFocusStart]);
 
   // Page Visibility API (background precision)
   useEffect(() => {
