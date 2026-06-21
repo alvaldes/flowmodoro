@@ -38,16 +38,53 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
   const sessionStartedAt = useRef(0);
   const entriesRef = useRef<SessionEntry[]>([]);
   const [currentSession, setCurrentSession] = useState<CurrentSessionInfo | null>(null);
+  const restoredOnce = useRef(false);
 
+  // ── Restore session from persisted store on hydration ────────────────
+  const restoredId = useTimerStore((s) => s.currentSessionId);
+  const restoredStartedAt = useTimerStore((s) => s.sessionStartedAt);
+
+  useEffect(() => {
+    if (restoredOnce.current) return;
+    if (!restoredId) return;
+
+    // Find the session in the sessions store
+    const sessions = useSessionsStore.getState().sessions;
+    const session = sessions.find((s) => s.id === restoredId);
+    if (!session) {
+      // Session not found — clear stale reference
+      useTimerStore.getState().setCurrentSessionId(null);
+      return;
+    }
+
+    // Restore refs from persisted data
+    currentSessionId.current = restoredId;
+    sessionStartedAt.current = restoredStartedAt || session.timestamp;
+    entriesRef.current = [...session.entries];
+
+    // If resting, restore breakTracker from initialRestTime
+    const timer = useTimerStore.getState();
+    if (timer.appState === "resting" && timer.initialRestTime > 0) {
+      const elapsed = timer.initialRestTime - timer.time;
+      breakTracker.current = {
+        startedAt: Date.now() - elapsed * 1000,
+        totalSeconds: timer.initialRestTime,
+      };
+    }
+
+    restoredOnce.current = true;
+    syncSession();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [restoredId, restoredStartedAt]);
+
+  // ── syncSession ──────────────────────────────────────────────────────
   const syncSession = useCallback(() => {
     const state = useTimerStore.getState();
     if (state.appState === "idle") {
       setCurrentSession(null);
     } else if (state.appState === "completed") {
-      // Keep last session data visible during completed state
       setCurrentSession((prev) => prev ? { ...prev, focusSeconds: 0, breakSeconds: 0 } : null);
     } else {
-      // Guard: if sessionStartedAt is 0 (e.g. after end() + auto-resume), set it now
       if (sessionStartedAt.current === 0) {
         sessionStartedAt.current = Date.now();
       }
@@ -58,7 +95,6 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
         : 0;
       setCurrentSession({
         startedAt: sessionStartedAt.current,
-        // Historical entries in reverse order (most recent first)
         entries: [...entriesRef.current].reverse(),
         focusSeconds,
         breakSeconds,
@@ -74,7 +110,6 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
     const state = useTimerStore.getState();
 
     if (state.appState === "resting" && currentSessionId.current && breakTracker.current) {
-      // Save break entry when resuming focus
       const breakTaken = Math.max(breakTracker.current.totalSeconds - state.time, 0);
       const entry: SessionEntry = {
         type: "break",
@@ -84,9 +119,7 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
       useSessionsStore.getState().addEntryToSession(currentSessionId.current, entry);
       entriesRef.current.push(entry);
       breakTracker.current = null;
-      // Keep currentSessionId — same session across cycles
     } else if (state.appState === "idle") {
-      // First focus: create the session ONCE with empty entries
       sessionStartedAt.current = Date.now();
       const id = generateId();
       currentSessionId.current = id;
@@ -97,6 +130,7 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
         entries: [],
       };
       useSessionsStore.getState().addSession(session);
+      useTimerStore.getState().setSessionMeta(id, sessionStartedAt.current);
     }
 
     useTimerStore.getState().start();
@@ -129,10 +163,8 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
       };
 
       if (currentSessionId.current) {
-        // Add to existing session
         useSessionsStore.getState().addEntryToSession(currentSessionId.current, focusEntry);
       } else {
-        // No session yet (auto-resume or edge case) — create one
         const id = generateId();
         currentSessionId.current = id;
         const session: Session = {
@@ -141,6 +173,7 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
           entries: [focusEntry],
         };
         useSessionsStore.getState().addSession(session);
+        useTimerStore.getState().setSessionMeta(id, now);
       }
       entriesRef.current.push(focusEntry);
       onBreakStart?.(focusTime);
@@ -165,7 +198,6 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
     const info = state.end(focusTime);
 
     if (currentSessionId.current) {
-      // Session exists — save in-progress entry
       if (wasFocusing && focusTime > 0) {
         const now = Date.now();
         const entry: SessionEntry = {
@@ -175,7 +207,6 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
         };
         useSessionsStore.getState().addEntryToSession(currentSessionId.current, entry);
         entriesRef.current.push(entry);
-        onSessionEnd?.(focusTime);
       } else if (wasResting && breakTracker.current) {
         const breakTaken = Math.max(breakTracker.current.totalSeconds - state.time, 0);
         if (breakTaken > 0) {
@@ -188,8 +219,8 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
           entriesRef.current.push(entry);
         }
       }
+      onSessionEnd?.(focusTime);
     } else if (info && focusTime > 0) {
-      // No session yet (focused without taking a break) — create one
       const id = generateId();
       const session: Session = {
         id,
@@ -204,6 +235,7 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
     entriesRef.current = [];
     currentSessionId.current = null;
     breakTracker.current = null;
+    // Note: store.end() already clears currentSessionId and sessionStartedAt
     syncSession();
   }, [onSessionEnd, syncSession]);
 
@@ -241,7 +273,6 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
       useTimerStore.getState().dismissCompleted();
 
       if (autoFocusAfterBreak) {
-        // Continue same session — don't create a new one
         useTimerStore.getState().start();
         onFocusStart?.();
         syncSession();
@@ -279,7 +310,6 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
   // ── Track state transitions ────────────────────────────────────────────
   useEffect(() => {
     if (prevAppState.current !== null && prevAppState.current !== appState) {
-      // Break ended naturally (resting → completed): save break entry
       if (prevAppState.current === "resting" && appState === "completed") {
         if (currentSessionId.current && breakTracker.current) {
           const entry: SessionEntry = {
@@ -290,7 +320,6 @@ export function usePreciseTimer(options: UsePreciseTimerOptions = {}): UsePrecis
           useSessionsStore.getState().addEntryToSession(currentSessionId.current, entry);
           entriesRef.current.push(entry);
           breakTracker.current = null;
-          // Keep currentSessionId — auto-resume continues the same session
         }
         syncSession();
       }

@@ -34,6 +34,8 @@ export interface TimerState {
   lastTickTimestamp: number;
   hiddenAt: number;
   initialRestTime: number;
+  currentSessionId: string | null;
+  sessionStartedAt: number;
 }
 
 export interface TimerActions {
@@ -45,6 +47,8 @@ export interface TimerActions {
   dismissCompleted: () => void;
   takeBreak: (restRatio: number, focusTime: number) => void;
   end: (focusTime: number) => { duration: number; timestamp: number } | null;
+  setSessionMeta: (id: string | null, startedAt: number) => void;
+  setCurrentSessionId: (id: string | null) => void;
 }
 
 export interface SettingsState {

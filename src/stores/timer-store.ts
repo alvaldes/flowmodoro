@@ -13,6 +13,8 @@ export const useTimerStore = create<TimerStore>()(
       lastTickTimestamp: Date.now(),
       hiddenAt: 0,
       initialRestTime: 0,
+      currentSessionId: null,
+      sessionStartedAt: 0,
 
       start: () => set({
         appState: "focusing",
@@ -74,6 +76,8 @@ export const useTimerStore = create<TimerStore>()(
         lastTickTimestamp: Date.now(),
         hiddenAt: 0,
         initialRestTime: 0,
+        currentSessionId: null,
+        sessionStartedAt: 0,
       }),
 
       completeRest: () => set({
@@ -116,15 +120,25 @@ export const useTimerStore = create<TimerStore>()(
           lastTickTimestamp: Date.now(),
           hiddenAt: 0,
           initialRestTime: 0,
+          currentSessionId: null,
+          sessionStartedAt: 0,
         });
         return session;
       },
+
+      setSessionMeta: (id: string | null, startedAt: number) =>
+        set({ currentSessionId: id, sessionStartedAt: startedAt }),
+
+      setCurrentSessionId: (id: string | null) =>
+        set({ currentSessionId: id }),
     }),
     {
       name: STORAGE_KEYS.TIMER,
       partialize: (state) => ({
         appState: state.appState,
         time: state.time,
+        currentSessionId: state.currentSessionId,
+        sessionStartedAt: state.sessionStartedAt,
       }),
       skipHydration: true,
     }
