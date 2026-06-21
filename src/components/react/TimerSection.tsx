@@ -281,7 +281,7 @@ export default function TimerSection({
             width: "100%",
             marginTop: "32px",
             flex: 1,
-            minHeight: 0,
+            minHeight: "12.9rem",
             background: "var(--surface)",
             borderRadius: "var(--radius-lg, 22px)",
             boxShadow: "var(--neu-raised-sm)",
@@ -313,7 +313,6 @@ export default function TimerSection({
               flex: 1,
               overflowY: "auto",
               padding: "0 20px 16px",
-              minHeight: 150,
             }}
           >
             {/* In-progress entry (always first) */}
