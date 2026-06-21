@@ -33,6 +33,7 @@ export interface TimerState {
   time: number;
   lastTickTimestamp: number;
   hiddenAt: number;
+  initialRestTime: number;
 }
 
 export interface TimerActions {

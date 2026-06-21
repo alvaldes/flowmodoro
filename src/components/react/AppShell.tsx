@@ -72,6 +72,7 @@ export default function AppShell() {
     onFocusStart: handleFocusStart,
     onBreakStart: handleBreakStart,
   });
+  const initialRestTime = useTimerStore((s) => s.initialRestTime);
 
   // Sync dark mode to DOM
   useEffect(() => {
@@ -182,6 +183,7 @@ export default function AppShell() {
               <TimerSection
                 appState={timer.appState}
                 time={timer.time}
+                initialRestTime={initialRestTime}
                 onStart={timer.start}
                 onBreak={timer.takeBreak}
                 onEnd={timer.end}

@@ -12,12 +12,14 @@ export const useTimerStore = create<TimerStore>()(
       time: 0,
       lastTickTimestamp: Date.now(),
       hiddenAt: 0,
+      initialRestTime: 0,
 
       start: () => set({
         appState: "focusing",
         time: 0,
         lastTickTimestamp: Date.now(),
         hiddenAt: 0,
+        initialRestTime: 0,
       }),
 
       tick: () => {
@@ -54,6 +56,7 @@ export const useTimerStore = create<TimerStore>()(
               time: 0,
               lastTickTimestamp: now,
               hiddenAt: 0,
+              initialRestTime: 0,
             });
           } else {
             set({
@@ -70,6 +73,7 @@ export const useTimerStore = create<TimerStore>()(
         time: 0,
         lastTickTimestamp: Date.now(),
         hiddenAt: 0,
+        initialRestTime: 0,
       }),
 
       completeRest: () => set({
@@ -77,6 +81,7 @@ export const useTimerStore = create<TimerStore>()(
         time: 0,
         lastTickTimestamp: Date.now(),
         hiddenAt: 0,
+        initialRestTime: 0,
       }),
 
       dismissCompleted: () => set({
@@ -84,6 +89,7 @@ export const useTimerStore = create<TimerStore>()(
         time: 0,
         lastTickTimestamp: Date.now(),
         hiddenAt: 0,
+        initialRestTime: 0,
       }),
 
       takeBreak: (restRatio: number, focusTime: number) => {
@@ -96,6 +102,7 @@ export const useTimerStore = create<TimerStore>()(
           time: calculatedRest,
           lastTickTimestamp: Date.now(),
           hiddenAt: 0,
+          initialRestTime: calculatedRest,
         });
       },
 
@@ -108,6 +115,7 @@ export const useTimerStore = create<TimerStore>()(
           time: 0,
           lastTickTimestamp: Date.now(),
           hiddenAt: 0,
+          initialRestTime: 0,
         });
         return session;
       },

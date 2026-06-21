@@ -7,6 +7,7 @@ import { Play, Square, Coffee, X } from "lucide-react";
 interface TimerSectionProps {
   appState: AppState;
   time: number;
+  initialRestTime: number;
   onStart: () => void;
   onBreak: () => void;
   onEnd: () => void;
@@ -108,6 +109,7 @@ export function PillButton({
 export default function TimerSection({
   appState,
   time,
+  initialRestTime,
   onStart,
   onBreak,
   onEnd,
@@ -123,7 +125,7 @@ export default function TimerSection({
         paddingTop: "16px",
       }}
     >
-      <AnalogDial time={time} state={appState} reducedMotion={reducedMotion} />
+      <AnalogDial time={time} state={appState} reducedMotion={reducedMotion} initialRestTime={initialRestTime} />
 
       {appState === "idle" && time > 0 && (
         <p

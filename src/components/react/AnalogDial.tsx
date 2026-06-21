@@ -6,6 +6,7 @@ interface AnalogDialProps {
   time: number;
   state: AppState;
   reducedMotion: boolean;
+  initialRestTime: number;
 }
 
 const SIZE = 320;
@@ -14,7 +15,7 @@ const CY = SIZE / 2;
 const OUTER_R = 148;
 const TICK_COUNT = 60;
 
-export default function AnalogDial({ time, state, reducedMotion }: AnalogDialProps) {
+export default function AnalogDial({ time, state, reducedMotion, initialRestTime }: AnalogDialProps) {
   // ---------------------------------------------------------------------------
   // FUTURE: to restore alternate ring/tick behavior for durations >=1h
   // (e.g. tick per hour and ring per minute), uncomment the block below
@@ -33,11 +34,11 @@ export default function AnalogDial({ time, state, reducedMotion }: AnalogDialPro
   //     : Math.floor(time / 3600);         // >= 1h: one tick per hour
   // ---------------------------------------------------------------------------
   const ringProgress = state === "resting"
-    ? 0
+    ? initialRestTime > 0 ? time / initialRestTime : 0
     : (time % 60) / 60;
 
   const ticksFilled = state === "resting"
-    ? 0
+    ? initialRestTime > 0 ? Math.round((time / initialRestTime) * TICK_COUNT) : 0
     : Math.floor((time % 3600) / 60);
 
   const ticks = useMemo(() => {
@@ -45,7 +46,9 @@ export default function AnalogDial({ time, state, reducedMotion }: AnalogDialPro
     for (let i = 0; i < TICK_COUNT; i++) {
       const angle = (i / TICK_COUNT) * 360 - 90;
       const rad = (angle * Math.PI) / 180;
-      const filled = state === "resting" ? false : i < ticksFilled;
+      const filled = state === "resting"
+        ? initialRestTime > 0 ? i < ticksFilled : false
+        : i < ticksFilled;
       const x1 = CX + (OUTER_R - 18) * Math.cos(rad);
       const y1 = CY + (OUTER_R - 18) * Math.sin(rad);
       const x2 = CX + (OUTER_R - 8) * Math.cos(rad);
@@ -53,7 +56,7 @@ export default function AnalogDial({ time, state, reducedMotion }: AnalogDialPro
       arr.push({ x1, y1, x2, y2, filled });
     }
     return arr;
-  }, [ticksFilled, state]);
+  }, [ticksFilled, state, initialRestTime]);
 
   const circumference = 2 * Math.PI * (OUTER_R - 26);
 
