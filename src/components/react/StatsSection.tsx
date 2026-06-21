@@ -273,7 +273,7 @@ export default function StatsSection() {
           No sessions yet. Start your first flow!
         </p>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxHeight: "60dvh", overflowY: "auto" }}>
           {[...sessions].reverse().map((s) => {
             const entries = s.entries ?? [];
             const focusDur = getFocusDuration(entries);
