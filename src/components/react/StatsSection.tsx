@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { useSessionsStore } from "@/stores/sessions-store";
 import { formatDuration } from "@/lib/format";
-import { DAY_LABELS } from "@/lib/constants";
 
 function getFocusDuration(entries: { type: string; duration: number }[] | undefined): number {
   if (!entries) return 0;
@@ -197,20 +196,28 @@ export default function StatsSection() {
         }}
         role="img"
         aria-label={`Focus minutes per day: ${weekData
-          .map((m, i) => `${DAY_LABELS[i]} ${Math.round(m / 60)}m`)
+          .map((m, i) => {
+            const d = new Date();
+            d.setDate(d.getDate() - (6 - i));
+            return `${d.toLocaleDateString("en", { weekday: "short" }).toUpperCase()} ${Math.round(m / 60)}m`;
+          })
           .join(", ")}`}
       >
         <div
           style={{
             display: "flex",
-            alignItems: "flex-end",
+            alignItems: "stretch",
             gap: "4px",
             height: "120px",
-            paddingBottom: "8px",
             borderBottom: "none",
           }}
         >
-          {weekData.map((m, i) => (
+          {weekData.map((m, i) => {
+            const pct = Math.min((m / maxDay) * 85, 85);
+            const d = new Date();
+            d.setDate(d.getDate() - (6 - i));
+            const label = d.toLocaleDateString("en", { weekday: "short" }).toUpperCase();
+            return (
               <div
                 key={i}
                 style={{
@@ -218,6 +225,7 @@ export default function StatsSection() {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
+                  justifyContent: "flex-end",
                   gap: "6px",
                 }}
               >
@@ -226,7 +234,7 @@ export default function StatsSection() {
                     width: "100%",
                     background: i === 6 ? "var(--accent)" : "var(--tick-bg)",
                     borderRadius: "var(--radius-sm, 10px) var(--radius-sm, 10px) 0 0",
-                    height: `${Math.max((m / maxDay) * 100, 4)}%`,
+                    height: `${Math.max(pct, 4)}%`,
                     transition: "background var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), height 0.3s ease",
                     minHeight: "6px",
                     opacity: i === 6 ? 1 : 0.45,
@@ -241,10 +249,11 @@ export default function StatsSection() {
                     fontWeight: i === 6 ? 600 : 400,
                   }}
                 >
-                  {DAY_LABELS[i]}
+                  {label}
                 </span>
               </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
