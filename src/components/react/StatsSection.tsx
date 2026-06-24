@@ -1,15 +1,20 @@
 import { useMemo, useState } from "react";
 import { useSessionsStore } from "@/stores/sessions-store";
 import { formatDuration } from "@/lib/format";
+import { Card, CardContent } from "@/components/ui/card";
 
-function getFocusDuration(entries: { type: string; duration: number }[] | undefined): number {
+function getFocusDuration(
+  entries: { type: string; duration: number }[] | undefined,
+): number {
   if (!entries) return 0;
   return entries
     .filter((e) => e.type === "focus")
     .reduce((sum, e) => sum + e.duration, 0);
 }
 
-function getBreakDuration(entries: { type: string; duration: number }[] | undefined): number {
+function getBreakDuration(
+  entries: { type: string; duration: number }[] | undefined,
+): number {
   if (!entries) return 0;
   return entries
     .filter((e) => e.type === "break")
@@ -31,7 +36,7 @@ export default function StatsSection() {
 
   const totalFocus = useMemo(
     () => sessions.reduce((acc, s) => acc + getFocusDuration(s.entries), 0),
-    [sessions]
+    [sessions],
   );
   const sessionCount = sessions.length;
 
@@ -44,7 +49,7 @@ export default function StatsSection() {
           return d.toDateString() === now.toDateString();
         })
         .reduce((acc, s) => acc + getFocusDuration(s.entries), 0),
-    [sessions]
+    [sessions],
   );
 
   const weekData = useMemo(() => {
@@ -74,16 +79,7 @@ export default function StatsSection() {
           marginBottom: "28px",
         }}
       >
-        <div
-          style={{
-            background: "var(--surface)",
-            borderRadius: "var(--radius-lg, 22px)",
-            padding: "18px 12px",
-            textAlign: "center",
-            boxShadow: "var(--neu-raised-md)",
-            transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
-          }}
-        >
+        <Card style={{ padding: "18px 12px", textAlign: "center" }}>
           <div
             style={{
               fontSize: "10px",
@@ -105,17 +101,8 @@ export default function StatsSection() {
           >
             {formatDuration(totalFocus)}
           </div>
-        </div>
-        <div
-          style={{
-            background: "var(--surface)",
-            borderRadius: "var(--radius-lg, 22px)",
-            padding: "18px 12px",
-            textAlign: "center",
-            boxShadow: "var(--neu-raised-md)",
-            transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
-          }}
-        >
+        </Card>
+        <Card style={{ padding: "18px 12px", textAlign: "center" }}>
           <div
             style={{
               fontSize: "10px",
@@ -137,17 +124,8 @@ export default function StatsSection() {
           >
             {sessionCount}
           </div>
-        </div>
-        <div
-          style={{
-            background: "var(--surface)",
-            borderRadius: "var(--radius-lg, 22px)",
-            padding: "18px 12px",
-            textAlign: "center",
-            boxShadow: "var(--neu-raised-md)",
-            transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
-          }}
-        >
+        </Card>
+        <Card style={{ padding: "18px 12px", textAlign: "center" }}>
           <div
             style={{
               fontSize: "10px",
@@ -169,7 +147,7 @@ export default function StatsSection() {
           >
             {formatDuration(todayFocus)}
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Weekly chart */}
@@ -185,15 +163,8 @@ export default function StatsSection() {
         This Week
       </h3>
 
-      <div
-        style={{
-          background: "var(--surface)",
-          borderRadius: "var(--radius-lg, 22px)",
-          padding: "20px",
-          marginBottom: "28px",
-          boxShadow: "var(--neu-raised-md)",
-          transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
-        }}
+      <Card
+        style={{ padding: "20px", marginBottom: "28px" }}
         role="img"
         aria-label={`Focus minutes per day: ${weekData
           .map((m, i) => {
@@ -216,7 +187,9 @@ export default function StatsSection() {
             const pct = Math.min((m / maxDay) * 85, 85);
             const d = new Date();
             d.setDate(d.getDate() - (6 - i));
-            const label = d.toLocaleDateString("en", { weekday: "short" }).toUpperCase();
+            const label = d
+              .toLocaleDateString("en", { weekday: "short" })
+              .toUpperCase();
             return (
               <div
                 key={i}
@@ -233,9 +206,11 @@ export default function StatsSection() {
                   style={{
                     width: "100%",
                     background: i === 6 ? "var(--accent)" : "var(--tick-bg)",
-                    borderRadius: "var(--radius-sm, 10px) var(--radius-sm, 10px) 0 0",
+                    borderRadius:
+                      "var(--radius-sm, 10px) var(--radius-sm, 10px) 0 0",
                     height: `${Math.max(pct, 4)}%`,
-                    transition: "background var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), height 0.3s ease",
+                    transition:
+                      "background var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), height 0.3s ease",
                     minHeight: "6px",
                     opacity: i === 6 ? 1 : 0.45,
                   }}
@@ -243,7 +218,10 @@ export default function StatsSection() {
                 <span
                   style={{
                     fontSize: "9px",
-                    color: i === 6 ? "var(--text-secondary)" : "var(--text-tertiary)",
+                    color:
+                      i === 6
+                        ? "var(--text-secondary)"
+                        : "var(--text-tertiary)",
                     letterSpacing: "0.02em",
                     textTransform: "uppercase",
                     fontWeight: i === 6 ? 600 : 400,
@@ -255,7 +233,7 @@ export default function StatsSection() {
             );
           })}
         </div>
-      </div>
+      </Card>
 
       {/* History title */}
       <h3
@@ -282,7 +260,16 @@ export default function StatsSection() {
           No sessions yet. Start your first flow!
         </p>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxHeight: "60dvh", overflowY: "auto" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            maxHeight: "60dvh",
+            overflowY: "auto",
+          }}
+          className="px-3 py-3"
+        >
           {[...sessions].reverse().map((s) => {
             const entries = s.entries ?? [];
             const focusDur = getFocusDuration(entries);
@@ -300,24 +287,42 @@ export default function StatsSection() {
                   fontSize: "14px",
                   boxShadow: "var(--neu-raised-sm)",
                   cursor: "pointer",
-                  transition: "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
+                  transition:
+                    "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
                 }}
                 onClick={() => toggleExpanded(s.id)}
                 role="button"
                 tabIndex={0}
                 aria-expanded={isOpen}
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") toggleExpanded(s.id); }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") toggleExpanded(s.id);
+                }}
+                className="max-w-[431px]"
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
                   <div>
                     <span style={{ color: "var(--fg)", fontWeight: 500 }}>
                       {new Date(s.timestamp).toLocaleDateString([], {
-                        weekday: "short", month: "short", day: "numeric",
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
                       })}
                     </span>
-                    <span style={{ color: "var(--text-tertiary)", marginLeft: "8px" }}>
+                    <span
+                      style={{
+                        color: "var(--text-tertiary)",
+                        marginLeft: "8px",
+                      }}
+                    >
                       {new Date(s.timestamp).toLocaleTimeString([], {
-                        hour: "2-digit", minute: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
                       })}
                     </span>
                   </div>
@@ -327,9 +332,23 @@ export default function StatsSection() {
                 </div>
 
                 {(s.name || (s.tags && s.tags.length > 0)) && (
-                  <div style={{ marginTop: "8px", display: "flex", flexWrap: "wrap", gap: "6px", alignItems: "center" }}>
+                  <div
+                    style={{
+                      marginTop: "8px",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "6px",
+                      alignItems: "center",
+                    }}
+                  >
                     {s.name && (
-                      <span style={{ fontSize: "12px", fontWeight: 500, color: "var(--fg)" }}>
+                      <span
+                        style={{
+                          fontSize: "12px",
+                          fontWeight: 500,
+                          color: "var(--fg)",
+                        }}
+                      >
                         {s.name}
                       </span>
                     )}
@@ -366,18 +385,62 @@ export default function StatsSection() {
                       fontSize: "13px",
                     }}
                   >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ color: "var(--text-secondary)", fontWeight: 500, display: "flex", alignItems: "center", gap: "6px" }}>
-                        <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--accent)", display: "inline-block" }} />
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: "var(--text-secondary)",
+                          fontWeight: 500,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: "50%",
+                            background: "var(--accent)",
+                            display: "inline-block",
+                          }}
+                        />
                         Focus
                       </span>
                       <span style={{ fontWeight: 500, color: "var(--fg)" }}>
                         {formatDuration(focusDur)}
                       </span>
                     </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ color: "var(--text-secondary)", fontWeight: 500, display: "flex", alignItems: "center", gap: "6px" }}>
-                        <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--text-tertiary)", display: "inline-block" }} />
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: "var(--text-secondary)",
+                          fontWeight: 500,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: "50%",
+                            background: "var(--text-tertiary)",
+                            display: "inline-block",
+                          }}
+                        />
                         Break
                       </span>
                       <span style={{ fontWeight: 500, color: "var(--fg)" }}>

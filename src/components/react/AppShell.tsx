@@ -157,7 +157,7 @@ export default function AppShell() {
   // --- Main App ---
   return (
     <div
-      className="app-container"
+      className="app-container no-scrollbar"
       style={{
         maxWidth: "480px",
         margin: "0 auto",
@@ -170,6 +170,7 @@ export default function AppShell() {
         paddingBottom: "88px",
         paddingTop: "0",
         overflow: "hidden",
+        overflowY: "auto",
       }}
     >
       <header
@@ -198,15 +199,7 @@ export default function AppShell() {
         </h1>
       </header>
 
-      <main
-        style={{
-          flex: 1,
-          minHeight: 0,
-          display: "flex",
-          flexDirection: "column",
-          overflowY: "auto",
-        }}
-      >
+      <main>
         <AnimatePresence mode="wait">
           {view === "timer" && (
             <motion.div

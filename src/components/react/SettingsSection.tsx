@@ -6,6 +6,7 @@ import { ALARM_SOUNDS } from "@/lib/constants";
 import type { AlarmSoundId } from "@/stores/types";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   Dialog,
   DialogTrigger,
@@ -162,7 +163,7 @@ export default function SettingsSection() {
   };
 
   return (
-    <div style={{ marginTop: "24px" }}>
+    <div style={{ marginTop: "24px" }} className="absolute">
       {/* Break Ratio */}
       <h3
         style={{
@@ -176,16 +177,9 @@ export default function SettingsSection() {
         Break Ratio
       </h3>
 
-      <div
-        style={{
-          background: "var(--surface)",
-          borderRadius: "var(--radius-lg, 22px)",
-          padding: "20px",
-          marginBottom: "28px",
-          boxShadow: "var(--neu-raised-md)",
-          transition:
-            "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
-        }}
+      <Card
+        style={{ padding: "20px", marginBottom: "28px" }}
+        className="min-w-[431px]"
       >
         <div
           style={{
@@ -256,7 +250,7 @@ export default function SettingsSection() {
           {Math.round(1 / restRatio)} min focus &rarr;{" "}
           {Math.round(restRatio * (1 / restRatio) * 60)}s rest
         </p>
-      </div>
+      </Card>
 
       {/* Appearance */}
       <h3
@@ -271,19 +265,14 @@ export default function SettingsSection() {
         Appearance
       </h3>
 
-      <div
+      <Card
         style={{
-          background: "var(--surface)",
-          borderRadius: "var(--radius-lg, 22px)",
           padding: "20px",
           marginBottom: "28px",
-          display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          boxShadow: "var(--neu-raised-md)",
-          transition:
-            "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
         }}
+        className="flex-row min-w-[431px]"
       >
         <div>
           <div
@@ -306,7 +295,7 @@ export default function SettingsSection() {
           onCheckedChange={toggleDarkMode}
           aria-label="Toggle dark mode"
         />
-      </div>
+      </Card>
 
       {/* Alarm Sounds */}
       <h3
@@ -321,19 +310,15 @@ export default function SettingsSection() {
         Alarm
       </h3>
 
-      <div
+      <Card
         style={{
-          background: "var(--surface)",
-          borderRadius: "var(--radius-lg, 22px)",
           padding: "20px",
           marginBottom: "28px",
           display: "flex",
           flexDirection: "column",
           gap: "16px",
-          boxShadow: "var(--neu-raised-md)",
-          transition:
-            "box-shadow var(--motion-base, 250ms) var(--ease-standard)",
         }}
+        className="min-w-[431px]"
       >
         {/* Focus Start */}
         <SoundRow
@@ -410,7 +395,7 @@ export default function SettingsSection() {
             {Math.round(volume * 100)}%
           </span>
         </div>
-      </div>
+      </Card>
 
       {/* Behavior */}
       <h3
@@ -425,19 +410,15 @@ export default function SettingsSection() {
         Behavior
       </h3>
 
-      <div
+      <Card
         style={{
-          background: "var(--surface)",
-          borderRadius: "var(--radius-lg, 22px)",
           padding: "20px",
           marginBottom: "28px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          boxShadow: "var(--neu-raised-md)",
-          transition:
-            "box-shadow var(--motion-base, 250ms) var(--ease-standard)",
         }}
+        className="flex-row min-w-[431px]"
       >
         <div>
           <div
@@ -460,7 +441,7 @@ export default function SettingsSection() {
           onCheckedChange={toggleAutoFocus}
           aria-label="Toggle auto-focus after break"
         />
-      </div>
+      </Card>
 
       {/* Notifications */}
       <h3
@@ -475,19 +456,15 @@ export default function SettingsSection() {
         Notifications
       </h3>
 
-      <div
+      <Card
         style={{
-          background: "var(--surface)",
-          borderRadius: "var(--radius-lg, 22px)",
           padding: "20px",
           marginBottom: "28px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          boxShadow: "var(--neu-raised-md)",
-          transition:
-            "box-shadow var(--motion-base, 250ms) var(--ease-standard)",
         }}
+        className="flex-row min-w-[431px]"
       >
         <div>
           <div
@@ -510,21 +487,17 @@ export default function SettingsSection() {
           onCheckedChange={toggleNotifications}
           aria-label="Toggle browser notifications"
         />
-      </div>
+      </Card>
 
       {/* Session count */}
-      <div
+      <Card
         style={{
-          background: "var(--surface)",
-          borderRadius: "var(--radius-lg, 22px)",
           padding: "20px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          boxShadow: "var(--neu-raised-md)",
-          transition:
-            "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
         }}
+        className="flex-row min-w-[431px]"
       >
         <div>
           <div
@@ -551,7 +524,7 @@ export default function SettingsSection() {
         >
           {sessionCount} total
         </div>
-      </div>
+      </Card>
 
       {/* Danger Zone */}
       <h3
@@ -575,27 +548,30 @@ export default function SettingsSection() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          boxShadow: "var(--neu-raised-md)",
-          border: "1px solid color-mix(in oklch, var(--destructive) 20%, transparent)",
+          // boxShadow: "var(--neu-raised-md)",
+          border:
+            "1px solid color-mix(in oklch, var(--destructive) 20%, transparent)",
           transition:
             "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
         }}
+        className="mb-24 min-w-[431px] max-w-[431px]"
       >
-        <div>
-          <div
+        <div className="flex flex-col">
+          <span
             style={{ fontWeight: 500, fontSize: "15px", color: "var(--fg)" }}
           >
             Clear All Data
-          </div>
-          <div
+          </span>
+          <span
             style={{
               fontSize: "12px",
               color: "var(--text-tertiary)",
               marginTop: "2px",
             }}
+            className="text-pretty mr-2"
           >
             Permanently delete all sessions, timer state, and settings
-          </div>
+          </span>
         </div>
 
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
@@ -604,14 +580,14 @@ export default function SettingsSection() {
               <Button
                 variant="outline"
                 size="sm"
-                className="gap-1.5 shrink-0 text-destructive border-destructive/40 hover:bg-destructive/10"
+                className="gap-1.5 shrink-0 text-destructive border-destructive/40 hover:bg-destructive hover:text-white dark:bg-[--surface] dark:border-destructive/40 dark:hover:bg-destructive"
               >
                 <Trash2 size={15} />
                 Delete
               </Button>
             }
           />
-          <DialogContent role="alertdialog">
+          <DialogContent role="alertdialog" showCloseButton={false}>
             <DialogHeader>
               <DialogTitle>Delete all data?</DialogTitle>
               <DialogDescription>
@@ -621,9 +597,7 @@ export default function SettingsSection() {
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
-              <DialogClose
-                render={<Button variant="outline">Cancel</Button>}
-              />
+              <DialogClose render={<Button variant="outline">Cancel</Button>} />
               <Button
                 variant="default"
                 className="gap-1.5 bg-destructive text-destructive-foreground hover:bg-destructive/90"

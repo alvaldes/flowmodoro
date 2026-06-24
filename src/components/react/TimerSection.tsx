@@ -62,10 +62,8 @@ export function PillButton({
         padding: 0,
         paddingRight: hasLabel ? "20px" : 0,
         background: active ? "var(--accent)" : "var(--accent-dim)",
-        boxShadow: active
-          ? "0 4px 12px rgba(0,0,0,0.25), 0 1px 3px rgba(0,0,0,0.12)"
-          : "0 2px 6px rgba(0,0,0,0.06)",
-        transition: "background 200ms ease, box-shadow 200ms ease",
+        boxShadow: active ? "var(--neu-accent-raised)" : "none",
+        transition: "background var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), box-shadow var(--motion-fast, 150ms) var(--ease-standard)",
         ...style,
       }}
     >
