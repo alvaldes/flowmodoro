@@ -78,7 +78,14 @@ export default function StatsSection() {
           marginBottom: "28px",
         }}
       >
-        <Card style={{ padding: "18px 12px", textAlign: "center" }}>
+        <Card
+          style={{
+            padding: "18px 12px",
+            textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           <div
             style={{
               fontSize: "10px",
@@ -96,12 +103,23 @@ export default function StatsSection() {
               fontWeight: 600,
               letterSpacing: "-0.01em",
               color: "var(--fg)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flex: 1,
             }}
           >
             {formatDuration(todayFocus)}
           </div>
         </Card>
-        <Card style={{ padding: "18px 12px", textAlign: "center" }}>
+        <Card
+          style={{
+            padding: "18px 12px",
+            textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           <div
             style={{
               fontSize: "10px",
@@ -119,28 +137,48 @@ export default function StatsSection() {
               fontWeight: 600,
               letterSpacing: "-0.01em",
               color: "var(--fg)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flex: 1,
             }}
           >
             {todaySessionCount}
           </div>
         </Card>
-        <Card style={{ padding: "12px", textAlign: "center" }}>
+        <Card
+          style={{
+            padding: "18px 12px",
+            textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           <div
             style={{
               fontSize: "10px",
               color: "var(--text-secondary)",
               textTransform: "uppercase",
               letterSpacing: "0.08em",
-              marginBottom: "4px",
+              marginBottom: "6px",
             }}
           >
             Focus vs Break
           </div>
-          <FocusBreakDoughnut
-            sessions={sessions}
-            period="today"
-            className="h-[40px]"
-          />
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <FocusBreakDoughnut
+              sessions={sessions}
+              period="today"
+              className="h-[40px]"
+            />
+          </div>
         </Card>
       </div>
 
