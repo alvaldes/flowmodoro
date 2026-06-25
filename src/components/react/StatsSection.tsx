@@ -1,7 +1,13 @@
 import { useMemo, useState } from "react";
 import { useSessionsStore } from "@/stores/sessions-store";
 import { formatDuration } from "@/lib/format";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import WeeklyFocusChart from "@/components/react/WeeklyFocusChart";
+import FocusBreakDoughnut from "@/components/react/FocusBreakDoughnut";
+import MonthlyTrendChart from "@/components/react/MonthlyTrendChart";
+import ProductivityHeatmap from "@/components/react/ProductivityHeatmap";
+import SessionTimeline from "@/components/react/SessionTimeline";
+import { aggregateWeekly } from "@/lib/chart-data";
 
 function getFocusDuration(
   entries: { type: string; duration: number }[] | undefined,
@@ -34,12 +40,6 @@ export default function StatsSection() {
     });
   };
 
-  const totalFocus = useMemo(
-    () => sessions.reduce((acc, s) => acc + getFocusDuration(s.entries), 0),
-    [sessions],
-  );
-  const sessionCount = sessions.length;
-
   const todayFocus = useMemo(
     () =>
       sessions
@@ -52,25 +52,24 @@ export default function StatsSection() {
     [sessions],
   );
 
-  const weekData = useMemo(() => {
-    const days: number[] = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const dStr = d.toDateString();
-      const total = sessions
-        .filter((s) => new Date(s.timestamp).toDateString() === dStr)
-        .reduce((acc, s) => acc + getFocusDuration(s.entries), 0);
-      days.push(total);
-    }
-    return days;
-  }, [sessions]);
+  const todaySessionCount = useMemo(
+    () =>
+      sessions.filter((s) => {
+        const d = new Date(s.timestamp);
+        const now = new Date();
+        return d.toDateString() === now.toDateString();
+      }).length,
+    [sessions],
+  );
 
-  const maxDay = Math.max(...weekData, 1);
+  const weeklySeconds = useMemo(
+    () => aggregateWeekly(sessions).reduce((acc, d) => acc + d.seconds, 0),
+    [sessions],
+  );
 
   return (
     <div style={{ marginTop: "24px" }}>
-      {/* Stat cards — neumorphic raised */}
+      {/* Today's stat cards — neumorphic raised */}
       <div
         style={{
           display: "grid",
@@ -89,53 +88,7 @@ export default function StatsSection() {
               marginBottom: "6px",
             }}
           >
-            Total
-          </div>
-          <div
-            style={{
-              fontSize: "20px",
-              fontWeight: 600,
-              letterSpacing: "-0.01em",
-              color: "var(--fg)",
-            }}
-          >
-            {formatDuration(totalFocus)}
-          </div>
-        </Card>
-        <Card style={{ padding: "18px 12px", textAlign: "center" }}>
-          <div
-            style={{
-              fontSize: "10px",
-              color: "var(--text-secondary)",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-              marginBottom: "6px",
-            }}
-          >
-            Sessions
-          </div>
-          <div
-            style={{
-              fontSize: "20px",
-              fontWeight: 600,
-              letterSpacing: "-0.01em",
-              color: "var(--fg)",
-            }}
-          >
-            {sessionCount}
-          </div>
-        </Card>
-        <Card style={{ padding: "18px 12px", textAlign: "center" }}>
-          <div
-            style={{
-              fontSize: "10px",
-              color: "var(--text-secondary)",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-              marginBottom: "6px",
-            }}
-          >
-            Today
+            Total Today
           </div>
           <div
             style={{
@@ -148,9 +101,83 @@ export default function StatsSection() {
             {formatDuration(todayFocus)}
           </div>
         </Card>
+        <Card style={{ padding: "18px 12px", textAlign: "center" }}>
+          <div
+            style={{
+              fontSize: "10px",
+              color: "var(--text-secondary)",
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              marginBottom: "6px",
+            }}
+          >
+            Sessions Today
+          </div>
+          <div
+            style={{
+              fontSize: "20px",
+              fontWeight: 600,
+              letterSpacing: "-0.01em",
+              color: "var(--fg)",
+            }}
+          >
+            {todaySessionCount}
+          </div>
+        </Card>
+        <Card style={{ padding: "12px", textAlign: "center" }}>
+          <div
+            style={{
+              fontSize: "10px",
+              color: "var(--text-secondary)",
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              marginBottom: "4px",
+            }}
+          >
+            Focus vs Break
+          </div>
+          <FocusBreakDoughnut
+            sessions={sessions}
+            period="today"
+            className="h-[40px]"
+          />
+        </Card>
       </div>
 
-      {/* Weekly chart */}
+      {/* Weekly chart — Chart.js */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "14px",
+        }}
+      >
+        <h3
+          style={{
+            fontSize: "15px",
+            fontWeight: 600,
+            letterSpacing: "-0.01em",
+            color: "var(--fg)",
+          }}
+        >
+          This Week
+        </h3>
+        <span
+          style={{
+            fontSize: "11px",
+            color: "var(--text-tertiary)",
+          }}
+        >
+          {formatDuration(weeklySeconds)} total
+        </span>
+      </div>
+
+      <Card style={{ padding: "16px", marginBottom: "28px" }}>
+        <WeeklyFocusChart sessions={sessions} />
+      </Card>
+
+      {/* Monthly trend */}
       <h3
         style={{
           fontSize: "15px",
@@ -160,80 +187,46 @@ export default function StatsSection() {
           color: "var(--fg)",
         }}
       >
-        This Week
+        30-Day Trend
       </h3>
 
-      <Card
-        style={{ padding: "20px", marginBottom: "28px" }}
-        role="img"
-        aria-label={`Focus minutes per day: ${weekData
-          .map((m, i) => {
-            const d = new Date();
-            d.setDate(d.getDate() - (6 - i));
-            return `${d.toLocaleDateString("en", { weekday: "short" }).toUpperCase()} ${Math.round(m / 60)}m`;
-          })
-          .join(", ")}`}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "stretch",
-            gap: "4px",
-            height: "120px",
-            borderBottom: "none",
-          }}
-        >
-          {weekData.map((m, i) => {
-            const pct = Math.min((m / maxDay) * 85, 85);
-            const d = new Date();
-            d.setDate(d.getDate() - (6 - i));
-            const label = d
-              .toLocaleDateString("en", { weekday: "short" })
-              .toUpperCase();
-            return (
-              <div
-                key={i}
-                style={{
-                  flex: 1,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "flex-end",
-                  gap: "6px",
-                }}
-              >
-                <div
-                  style={{
-                    width: "100%",
-                    background: i === 6 ? "var(--accent)" : "var(--tick-bg)",
-                    borderRadius:
-                      "var(--radius-sm, 10px) var(--radius-sm, 10px) 0 0",
-                    height: `${Math.max(pct, 4)}%`,
-                    transition:
-                      "background var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), height 0.3s ease",
-                    minHeight: "6px",
-                    opacity: i === 6 ? 1 : 0.45,
-                  }}
-                />
-                <span
-                  style={{
-                    fontSize: "9px",
-                    color:
-                      i === 6
-                        ? "var(--text-secondary)"
-                        : "var(--text-tertiary)",
-                    letterSpacing: "0.02em",
-                    textTransform: "uppercase",
-                    fontWeight: i === 6 ? 600 : 400,
-                  }}
-                >
-                  {label}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+      <Card style={{ padding: "16px", marginBottom: "28px" }}>
+        <MonthlyTrendChart sessions={sessions} />
       </Card>
+
+      {/* Productivity scatter */}
+      <h3
+        style={{
+          fontSize: "15px",
+          fontWeight: 600,
+          marginBottom: "14px",
+          letterSpacing: "-0.01em",
+          color: "var(--fg)",
+        }}
+      >
+        When You Focus
+      </h3>
+
+      <Card style={{ padding: "16px", marginBottom: "28px" }}>
+        <ProductivityHeatmap sessions={sessions} />
+      </Card>
+
+      {/* Session timeline */}
+      {/* <h3 */}
+      {/*   style={{ */}
+      {/*     fontSize: "15px", */}
+      {/*     fontWeight: 600, */}
+      {/*     marginBottom: "14px", */}
+      {/*     letterSpacing: "-0.01em", */}
+      {/*     color: "var(--fg)", */}
+      {/*   }} */}
+      {/* > */}
+      {/*   Session Breakdown */}
+      {/* </h3> */}
+      {/**/}
+      {/* <Card style={{ padding: "16px", marginBottom: "28px" }}> */}
+      {/*   <SessionTimeline sessions={sessions} limit={10} /> */}
+      {/* </Card> */}
 
       {/* History title */}
       <h3
