@@ -165,20 +165,11 @@ export default function StatsSection() {
           >
             Focus vs Break
           </div>
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <FocusBreakDoughnut
-              sessions={sessions}
-              period="today"
-              className="h-[40px]"
-            />
-          </div>
+          <FocusBreakDoughnut
+            sessions={sessions}
+            period="today"
+            className="h-[40px]"
+          />
         </Card>
       </div>
 
