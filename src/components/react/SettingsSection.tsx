@@ -163,7 +163,7 @@ export default function SettingsSection() {
   };
 
   return (
-    <div style={{ marginTop: "24px" }} className="absolute">
+    <div style={{ marginTop: "24px" }} className="absolute pr-6">
       {/* Break Ratio */}
       <h3
         style={{
@@ -177,10 +177,7 @@ export default function SettingsSection() {
         Break Ratio
       </h3>
 
-      <Card
-        style={{ padding: "20px", marginBottom: "28px" }}
-        className="min-w-[431px]"
-      >
+      <Card style={{ padding: "20px", marginBottom: "28px" }}>
         <div
           style={{
             display: "flex",
@@ -272,7 +269,7 @@ export default function SettingsSection() {
           justifyContent: "space-between",
           alignItems: "center",
         }}
-        className="flex-row min-w-[431px]"
+        className="flex-row"
       >
         <div>
           <div
@@ -318,7 +315,6 @@ export default function SettingsSection() {
           flexDirection: "column",
           gap: "16px",
         }}
-        className="min-w-[431px]"
       >
         {/* Focus Start */}
         <SoundRow
@@ -418,7 +414,7 @@ export default function SettingsSection() {
           justifyContent: "space-between",
           alignItems: "center",
         }}
-        className="flex-row min-w-[431px]"
+        className="flex-row"
       >
         <div>
           <div
@@ -464,7 +460,7 @@ export default function SettingsSection() {
           justifyContent: "space-between",
           alignItems: "center",
         }}
-        className="flex-row min-w-[431px]"
+        className="flex-row"
       >
         <div>
           <div
@@ -497,7 +493,7 @@ export default function SettingsSection() {
           justifyContent: "space-between",
           alignItems: "center",
         }}
-        className="flex-row min-w-[431px]"
+        className="flex-row"
       >
         <div>
           <div
@@ -554,7 +550,7 @@ export default function SettingsSection() {
           transition:
             "box-shadow var(--motion-base, 250ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1))",
         }}
-        className="mb-24 min-w-[431px] max-w-[431px]"
+        className="mb-24"
       >
         <div className="flex flex-col">
           <span
