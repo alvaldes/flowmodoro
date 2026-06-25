@@ -37,7 +37,7 @@ export default function FocusBreakDoughnut({
             data: [Math.round(ratio.focus / 60), Math.round(ratio.break / 60)],
             backgroundColor: [colors.accent, colors.tickBg],
             borderWidth: 0,
-            hoverOffset: 6,
+            hoverOffset: 0,
           },
         ],
       },
@@ -48,12 +48,7 @@ export default function FocusBreakDoughnut({
         plugins: {
           legend: { display: false },
           tooltip: {
-            callbacks: {
-              label: (ctx) => {
-                const val = ctx.parsed;
-                return `${ctx.label}: ${val} min`;
-              },
-            },
+            enabled: false,
           },
         },
       },
