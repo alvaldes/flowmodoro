@@ -63,7 +63,8 @@ export function PillButton({
         paddingRight: hasLabel ? "20px" : 0,
         background: active ? "var(--accent)" : "var(--accent-dim)",
         boxShadow: active ? "var(--neu-accent-raised)" : "none",
-        transition: "background var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), box-shadow var(--motion-fast, 150ms) var(--ease-standard)",
+        transition:
+          "background var(--motion-fast, 150ms) var(--ease-standard, cubic-bezier(0.2, 0, 0, 1)), box-shadow var(--motion-fast, 150ms) var(--ease-standard)",
         ...style,
       }}
     >
@@ -283,7 +284,7 @@ export default function TimerSection({
             width: "100%",
             marginTop: "32px",
             flex: 1,
-            minHeight: "12.9rem",
+            marginBottom: "2rem",
             background: "var(--surface)",
             borderRadius: "var(--radius-lg, 22px)",
             boxShadow: "var(--neu-raised-sm)",
